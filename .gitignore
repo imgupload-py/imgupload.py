@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# imgupload custom
+uploadkeys
+savelog.log
+uwsgi.log

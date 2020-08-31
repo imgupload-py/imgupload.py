@@ -132,3 +132,4 @@ dmypy.json
 uploadkeys
 savelog.log
 uwsgi.log
+settings.py

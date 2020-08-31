@@ -53,8 +53,6 @@ def upload():
         validkeys = [x.strip("\n") for x in validkeys]
         while "" in validkeys:
             validkeys.remove("")
-            print("removed blank key")
-        print("Valid keys: {0}".format(validkeys))
         print("Loaded validkeys")
 
         if "uploadKey" in request.form:  # if an uploadKey was provided

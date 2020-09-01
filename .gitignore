@@ -133,3 +133,4 @@ uploadkeys
 savelog.log
 uwsgi.log
 settings.py
+secret.key

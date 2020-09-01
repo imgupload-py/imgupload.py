@@ -56,7 +56,7 @@ if "ALLOWED_EXTENSIONS" in checksettings:
     for e in settings.ALLOWED_EXTENSIONS:
         if not e.startswith("."):
             invalid_exts.append(e)
-    
+
     if len(invalid_exts) > 0:
         print("[!] The following extensions listed in ALLOWED_EXTENSIONS are invalid:")
         for e in invalid_exts:
@@ -96,19 +96,20 @@ if "ROOTURL" in checksettings:
         print("[" + u"\u2713" + "] ROOTURL is good!")
 
 
-# Ask the user if SAVELOG is the intended filename
-if "SAVELOG" in checksettings:
-    print("[*] SAVELOG was interpreted to be {0}".format(settings.SAVELOG))
-    print("[*] If this is not the intended filename, please fix it.")
-
 # Check if ENCKEY_PATH exists
 enckey_exists = True
-if "UPLOAD_FOLDER" in checksettings:
+if "ENCKEY_PATH" in checksettings:
     if not os.path.isfile(settings.ENCKEY_PATH):
         enckey_exists = False
         print("[!] The path set in ENCKEY_PATH ('{0}') doesn't exist!".format(settings.ENCKEY_PATH))
     else:
         print("[" + u"\u2713" + "] ENCKEY_PATH exists!")
+
+
+# Ask the user if SAVELOG is the intended filename
+if "SAVELOG" in checksettings:
+    print("[*] SAVELOG was interpreted to be {0}".format(settings.SAVELOG))
+    print("[*] If this is not the intended filename, please fix it.")
 
 
 # Show summary
@@ -136,6 +137,10 @@ if len(invalid_exts) > 0:
 if not uploadfolder_exists:
     summarygood = False
     print("UPLOAD_FOLDER ({0}) does not exist!".format(settings.UPLOAD_FOLDER))
+
+if not enckey_exists:
+    summarygood = False
+    print("ENCKEY_PATH ({0}) does not exist!".format(settings.ENCKEY_PATH))
 
 if not rooturl_good:
     summarygood = False

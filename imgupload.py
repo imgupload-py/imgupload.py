@@ -46,7 +46,6 @@ def upload():
     if request.method == "POST":  # sanity check: make sure it's a POST request
         print("Request method was POST!")
 
-        os.chmod("uploadkeys", settings.UPLOADKEYS_CHMOD)
         with open(settings.ENCKEY_PATH,"rb") as enckey: # load encryption key
             key = enckey.read()
         f = Fernet(key)

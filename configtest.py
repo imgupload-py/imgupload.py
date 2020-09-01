@@ -9,7 +9,6 @@ defaults = {
     "ROOTURL": "https://img.bbaovanc.com/",
     "SAVELOG": "savelog.log",
     "SAVELOG_CHMOD": "0o644",
-    "UPLOADKEYS_CHMOD": "0o400",
     "SAVELOG_KEYPREFIX": 4,
     "ENCKEY_PATH": "secret.key"
 }
@@ -20,7 +19,6 @@ deftypes = {
     "ROOTURL": str,
     "SAVELOG": str,
     "SAVELOG_CHMOD": int,
-    "UPLOADKEYS_CHMOD": int,
     "SAVELOG_KEYPREFIX": int,
     "ENCKEY_PATH": str,
 }

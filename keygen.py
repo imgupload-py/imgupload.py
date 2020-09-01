@@ -8,7 +8,7 @@ import sys
 import os
 
 
-# Check if the script was run as root 
+# Check if the script was run as root
 if os.geteuid() != 0:
     exit("Root privileges are necessary to run this script.\nPlease try again as root or using `sudo`.")
 

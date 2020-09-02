@@ -2,15 +2,12 @@ from flask import Flask, request, jsonify, abort, Response
 from cryptography.fernet import Fernet
 from flask_api import status
 from pathlib import Path
-import string
 import random
 import os
 import datetime
 
 import settings  # app settings (such as allowed extensions)
-
-
-ALPHANUMERIC = string.ascii_letters + string.digits  # uppercase, lowercase, and numbers
+import functions  # custom functions
 
 app = Flask(__name__)  # app is the app
 
@@ -20,15 +17,6 @@ def allowed_extension(testext):
         return True
     else:
         return False
-
-
-def generate_name(extension):
-    namefound = False
-    while not namefound:
-        fname = ''.join((random.choice(ALPHANUMERIC) for i in range(8))) + str(extension)
-        if not Path(fname).is_file():
-            namefound = True
-    return fname
 
 
 def log_savelog(key, ip, savedname):
@@ -77,7 +65,7 @@ def upload():
                 fext = Path(f.filename).suffix  # get the uploaded extension
                 if allowed_extension(fext):  # if the extension is allowed
                     print("Generating file with extension {0}".format(fext))
-                    fname = generate_name(fext)  # generate file name
+                    fname = functions.generate_name() + fext  # generate file name
                     print("Generated name: {0}".format(fname))
 
                     if f:  # if the uploaded image exists

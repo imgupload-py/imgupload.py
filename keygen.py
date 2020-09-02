@@ -8,11 +8,6 @@ import sys
 import os
 
 
-# Check if the script was run as root
-if os.geteuid() != 0:
-    exit("Root privileges are necessary to run this script.\nPlease try again as root or using `sudo`.")
-
-
 # Check if encryption key already exists
 enckey = Path(settings.ENCKEY_PATH)
 if enckey.is_file():
@@ -63,40 +58,46 @@ def ask_yn(msg):
     return proceed
 
 
-N = 64  # Size of token
+start = ask_yn("Have you run this program as the correct user (for example, nginx uses www-data)? [y/n] ")
+if not start:
+    print("Please run this as the correct user with: sudo su [user] -s /bin/sh -c 'python3 keygen/py'")
 
-# Generate key
-token = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(N))
-
-# Decrypt the existing keyfile
-key = load_key()
-keyf = Fernet(key)
-
-genkey = True
-uploadkeysp = Path("uploadkeys")
-if not uploadkeysp.is_file():
-    uploadkeysp.touch()
 else:
-    with open("uploadkeys", "rb") as ukf:
-        # read the encrypted data
-        encrypted_data = ukf.read()
 
-    try:
-        decrypted_data = keyf.decrypt(encrypted_data)  # decrypt data
-        with open("uploadkeys", "wb") as ukf:
-            ukf.write(decrypted_data)  # write the original file
-    except InvalidToken:
-        print("The encrypted key data is invalid and cannot be read.")
-        print("It may be necessary to clear the file entirely, which will invalidate all tokens.")
-        proceed = ask_yn("Do you wish to proceed to clearing the uploadkeys file? [y/n] ")
+    N = 64  # Size of token
 
-        if proceed:
-            os.remove("uploadkeys")
-            print("Removed uploadkeys file.")
-            proceed2 = ask_yn("Would you like to continue and generate a new token? [y/n] ")
-            if not proceed2:
-                genkey = False
+    # Generate key
+    token = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(N))
 
-if genkey:
-    print("Your new token is: " + str(token))  # Print token
-    encrypt_key(str(token))  # Encrypt the key and save
+    # Decrypt the existing keyfile
+    key = load_key()
+    keyf = Fernet(key)
+
+    genkey = True
+    uploadkeysp = Path("uploadkeys")
+    if not uploadkeysp.is_file():
+        uploadkeysp.touch()
+    else:
+        with open("uploadkeys", "rb") as ukf:
+            # read the encrypted data
+            encrypted_data = ukf.read()
+
+        try:
+            decrypted_data = keyf.decrypt(encrypted_data)  # decrypt data
+            with open("uploadkeys", "wb") as ukf:
+                ukf.write(decrypted_data)  # write the original file
+        except InvalidToken:
+            print("The encrypted key data is invalid and cannot be read.")
+            print("It may be necessary to clear the file entirely, which will invalidate all tokens.")
+            proceed = ask_yn("Do you wish to proceed to clearing the uploadkeys file? [y/n] ")
+
+            if proceed:
+                os.remove("uploadkeys")
+                print("Removed uploadkeys file.")
+                proceed2 = ask_yn("Would you like to continue and generate a new token? [y/n] ")
+                if not proceed2:
+                    genkey = False
+
+    if genkey:
+        print("Your new token is: " + str(token))  # Print token
+        encrypt_key(str(token))  # Encrypt the key and save

@@ -12,12 +12,13 @@ imgupload is a Flask + uWSGI application to serve as an all-purpose image/file u
 5. Install dependencies: `python3 -m pip install -r requirements.txt`
 6. Run the Flask app
 
-### Running the Flask app
-## Using uWSGI
+## Running the Flask app
+### Using uWSGI
 [https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html)
+
 Instructions specific to imgupload are coming soon
 
-## Using Flask development server
+### Using Flask development server
 ```shell
 $ source env/bin/activate  # if you haven't already entered the virtualenv
 $ export FLASK_APP=imgupload.py

@@ -34,20 +34,13 @@ def upload():
     if request.method == "POST":  # sanity check: make sure it's a POST request
         print("Request method was POST!")
 
-        with open(settings.ENCKEY_PATH,"rb") as enckey: # load encryption key
-            key = enckey.read()
-        f = Fernet(key)
-
-        with open("uploadkeys", "rb") as keyfile:
-            encrypted_data = keyfile.read()
-        decrypted_data = str(f.decrypt(encrypted_data).decode('utf-8'))
-        decrypted_data = decrypted_data.splitlines()
-
-        validkeys = [x.strip("\n") for x in decrypted_data]
+        with open("uploadkeys", "r") as keyfile:  # load valid keys
+            validkeys = keyfile.readlines()
+        validkeys = [x.strip("\n") for x in validkeys]
         while "" in validkeys:
             validkeys.remove("")
-            print("Removed blank key(s)")
         print("Loaded validkeys")
+
         if "uploadKey" in request.form:  # if an uploadKey was provided
             if request.form["uploadKey"] in validkeys:  # check if uploadKey is valid
                 print("Key is valid!")

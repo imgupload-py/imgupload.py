@@ -134,4 +134,3 @@ savelog.log
 uwsgi.log
 settings.py
 functions.py
-secret.key

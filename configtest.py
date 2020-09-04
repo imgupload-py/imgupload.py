@@ -10,7 +10,6 @@ defaults = {
     "SAVELOG": "savelog.log",
     "SAVELOG_CHMOD": "0o644",
     "SAVELOG_KEYPREFIX": 4,
-    "ENCKEY_PATH": "secret.key"
 }
 
 deftypes = {
@@ -20,7 +19,6 @@ deftypes = {
     "SAVELOG": str,
     "SAVELOG_CHMOD": int,
     "SAVELOG_KEYPREFIX": int,
-    "ENCKEY_PATH": str,
 }
 
 
@@ -94,16 +92,6 @@ if "ROOTURL" in checksettings:
         print("[" + u"\u2713" + "] ROOTURL is good!")
 
 
-# Check if ENCKEY_PATH exists
-enckey_exists = True
-if "ENCKEY_PATH" in checksettings:
-    if not os.path.isfile(settings.ENCKEY_PATH):
-        enckey_exists = False
-        print("[!] The path set in ENCKEY_PATH ('{0}') doesn't exist!".format(settings.ENCKEY_PATH))
-    else:
-        print("[" + u"\u2713" + "] ENCKEY_PATH exists!")
-
-
 # Ask the user if SAVELOG is the intended filename
 if "SAVELOG" in checksettings:
     print("[*] SAVELOG was interpreted to be {0}".format(settings.SAVELOG))
@@ -135,10 +123,6 @@ if len(invalid_exts) > 0:
 if not uploadfolder_exists:
     summarygood = False
     print("UPLOAD_FOLDER ({0}) does not exist!".format(settings.UPLOAD_FOLDER))
-
-if not enckey_exists:
-    summarygood = False
-    print("ENCKEY_PATH ({0}) does not exist!".format(settings.ENCKEY_PATH))
 
 if not rooturl_good:
     summarygood = False

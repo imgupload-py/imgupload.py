@@ -4,4 +4,3 @@ ROOTURL = "https://example.com/"
 SAVELOG = "savelog.log"
 SAVELOG_CHMOD = 0o644
 SAVELOG_KEYPREFIX = 4
-ENCKEY_PATH = "secret.key"

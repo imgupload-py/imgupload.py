@@ -40,18 +40,14 @@ def decrypt_uploadkeys():
         proceed = ask_yn("Do you wish to proceed to clearing the uploadkeys file? [y/n] ")
 
         if proceed:
-            print("Proceed1")
             os.remove("uploadkeys")
             print("Removed uploadkeys file.")
             proceed2 = ask_yn("Would you like to continue and generate a new key? [y/n] ")
             if not proceed2:
-                print("not proceed2")
                 return False
             else:
-                print("proceed2")
                 return True
         else:
-            print("not Proceed1")
             return False
 
 
@@ -98,26 +94,15 @@ if __name__ == "__main__":
         print("Please run this as the correct user with: sudo su [user] -s /bin/sh -c 'python3 keygen.py'")
 
     else:
-        # Decrypt the existing keyfile
-        secret = load_secret()
-        keyf = Fernet(secret)
-
-        genkey = True
         uploadkeysp = Path("uploadkeys")
         if not uploadkeysp.is_file():
             uploadkeysp.touch()
+
+        if decrypt_uploadkeys():  # Decrypt the file
+            N = 64  # Size of key
+            key = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(N))
+            print("Your new key is: " + str(key))  # Print key
+            append_uploadkey(key)  # Save the new key to file unencrypted
+            encrypt_uploadkeys()  # Encrypt the uploadkeys file
         else:
-            with open("uploadkeys", "rb") as ukf:
-                # read the encrypted data
-                encrypted_data = ukf.read()
-
-
-        if genkey:
-            if decrypt_uploadkeys():  # Decrypt the file
-                N = 64  # Size of key
-                key = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(N))
-                print("Your new key is: " + str(key))  # Print key
-                append_uploadkey(key)  # Save the new key to file unencrypted
-                encrypt_uploadkeys()  # Encrypt the uploadkeys file
-            else:
-                print("Exiting.")
+            print("Exiting.")

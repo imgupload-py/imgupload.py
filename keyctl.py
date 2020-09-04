@@ -118,13 +118,15 @@ def cmd_remove(args):
     if rmkey(args.key):
         logging.debug("Successfully removed the requested key")
     else:
-        print("No key was removed.")
+        logging.info("No key was removed.")
 
 def cmd_dedupe(args):
     for d in find_duplicates():
         r = rmkey(d)
         logging.debug(r)
-        print("Removed duplicate key: {0}".format(d))
+        logging.info("Removed duplicate key: {0}".format(d))
+    else:
+        logging.info("[" + u"\u2713" + "] No duplicate keys found!")
 
 def cmd_show(args):
     for k in get_keys():

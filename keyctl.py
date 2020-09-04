@@ -8,12 +8,12 @@ Command-line utility for easy management of the uploadkeys file.
 from pathlib import Path
 import argparse
 import logging
-import random
+import secrets
 import string
 
 
 def genkey(length):
-    key = ''.join(random.choice(string.ascii_letters + string.digits) for x in range(length))
+    key = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(length))
     return key
 
 

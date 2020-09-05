@@ -12,34 +12,39 @@ import secrets
 import string
 
 
+def read_keyfile():
+    with open("uploadkeys", "r") as keyfile:  # open uploadkeys
+        keys = keyfile.readlines()  # read all the keys
+        logging.debug("Read uploadkeys")
+    keys = [x.strip("\n") for x in keys]  # strip newlines from keys
+    logging.debug("Stripped newlines from keys")
+    return keys
+
+
 def genkey(length):
     key = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(length))
     return key
 
 
 def savekey(key):
-    if not Path("uploadkeys").is_file():
+    if not Path("uploadkeys").is_file():  # if uploadkeys doesn't exist, log an info message
         logging.info("uploadkeys file doesn't exist, it will be created.")
     with open("uploadkeys", "a+") as keyfile:
-        keyfile.write(str(key) + "\n")
+        keyfile.write(str(key) + "\n")  # add the key
     logging.debug("Saved a key to uploadkeys: {0}".format(key))
 
 
 def rmkey(delkey):
     removedkey = False
-    with open("uploadkeys", "r") as keyfile:
-        allkeys = keyfile.readlines()
-        logging.debug("Loaded all upload keys")
-    allkeys = [x.strip("\n") for x in allkeys]
-    logging.debug("Stripped keys")
-    if delkey in allkeys:
-        allkeys.remove(delkey)
+    allkeys = read_keyfile()
+    if delkey in allkeys:  # if the key to remove exists
+        allkeys.remove(delkey)  # remove the first instance of the key
         removedkey = True
         logging.debug("Removed one instance of the key")
 
     with open("uploadkeys", "w") as keyfile:
         for k in allkeys:
-            keyfile.write(k + "\n")
+            keyfile.write(k + "\n")  # write the remaining keys
 
     if removedkey:
         return True
@@ -48,11 +53,8 @@ def rmkey(delkey):
 
 
 def find_duplicates():
-    with open("uploadkeys", "r") as keyfile:
-        allkeys = keyfile.readlines()
-        logging.debug("Read all keys")
-    allkeys = [x.strip("\n") for x in allkeys]
-    logging.debug("Stripped newlines")
+    allkeys = read_keyfile()
+
     seen = set()
     ukeys = []
     dupkeys = []
@@ -66,11 +68,7 @@ def find_duplicates():
 
 
 def get_keys():
-    with open("uploadkeys", "r") as keyfile:  # load valid keys
-        validkeys = keyfile.readlines()
-    logging.debug("Read uploadkeys")
-    validkeys = [x.strip("\n") for x in validkeys]
-    logging.debug("Stripped newlines from validkeys")
+    validkeys = read_keyfile()
     while "" in validkeys:
         validkeys.remove("")
     logging.debug("Removed blank keys")
@@ -85,7 +83,7 @@ def cmd_list(args):
     for i in range(len(validkeys)):
         showkey = validkeys[i][:6]
         if len(validkeys[i]) > 6:
-            showkey += "..."
+            showkey += "..."  # add ellipses since the key was shortened in list
 
         print("    [{0}] {1}".format(i+1, showkey))
 
@@ -121,10 +119,12 @@ def cmd_remove(args):
         logging.info("No key was removed.")
 
 def cmd_dedupe(args):
-    for d in find_duplicates():
-        r = rmkey(d)
-        logging.debug(r)
-        logging.info("Removed duplicate key: {0}".format(d))
+    dupes = find_duplicates()
+    if len(dupes) > 0:
+        for d in dupes:
+            r = rmkey(d)
+            logging.debug(r)
+            logging.info("Removed duplicate key: {0}".format(d))
     else:
         logging.info("[" + u"\u2713" + "] No duplicate keys found!")
 

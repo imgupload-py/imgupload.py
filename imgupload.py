@@ -17,7 +17,7 @@ app = Flask(__name__)  # app is the app
 
 
 def allowed_extension(testext):
-    if testext in settings.ALLOWED_EXTENSIONS:
+    if testext.lower() in settings.ALLOWED_EXTENSIONS:
         return True
     else:
         return False

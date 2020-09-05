@@ -4,7 +4,7 @@ imgupload.py
 
 Flask application for processing images uploaded through POST requests.
 """
-from flask import Flask, request, jsonify, abort, Response
+from flask import Flask, request, jsonify, Response
 from flask_api import status
 from pathlib import Path
 import os
@@ -81,21 +81,21 @@ def upload():
 
                 else:  # if the extension was invalid
                     print("Uploaded extension is invalid!")
-                    abort(415)
+                    return jsonify({'status': 'error', 'error': 'INVALID_EXTENSION'}), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
             else:  # if the key was not valid
                 print("Key is invalid!")
                 print("Request key: {0}".format(request.form["uploadKey"]))
-                abort(401)
+                return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
         else:  # if uploadKey was not found in request body
             print("No uploadKey found in request!")
-            abort(401)
+            return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
 
     else:  # if the request method wasn't post
         print("Request method was not POST!")
-        abort(405)
+        return jsonify({'status': 'error', 'error': 'METHOD_NOT_ALLOWED'}), status.HTTP_405_METHOD_NOT_ALLOWED
 
 if __name__ == "__main__":
     print("Run with `flask` or a WSGI server!")

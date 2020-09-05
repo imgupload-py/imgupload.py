@@ -49,6 +49,11 @@ def upload():
             if request.form["uploadKey"] in validkeys:  # check if uploadKey is valid
                 print("Key is valid!")
 
+                if "verify" in request.form.keys():
+                    if request.form["verify"] == "true":
+                        print("Request is asking if key is valid (it is)")
+                        return jsonify({'status': 'key_valid'})
+
                 if "imageUpload" in request.files:  # check if image to upload was provided
                     f = request.files["imageUpload"]  # f is the image to upload
                 else:
@@ -91,11 +96,6 @@ def upload():
         else:  # if uploadKey was not found in request body
             print("No uploadKey found in request!")
             return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
-
-
-    else:  # if the request method wasn't post
-        print("Request method was not POST!")
-        return jsonify({'status': 'error', 'error': 'METHOD_NOT_ALLOWED'}), status.HTTP_405_METHOD_NOT_ALLOWED
 
 if __name__ == "__main__":
     print("Run with `flask` or a WSGI server!")

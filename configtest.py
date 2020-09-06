@@ -4,6 +4,7 @@ configtest.py
 
 Tests the validity of your configuration in settings.py.
 """
+
 import os
 import settings as settings
 

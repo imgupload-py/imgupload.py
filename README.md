@@ -7,24 +7,43 @@
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/bbaovanc/imgupload?color=purple)
 ![GitHub](https://img.shields.io/github/license/bbaovanc/imgupload?color=purple)
 
-### What is imgupload?
+## What is imgupload?
+
 imgupload is a Flask + uWSGI application to serve as an all-purpose image/file uploader over POST requests.
 
 ---
 
-### Installation
+## FAQ
+
+**Where can I send bug reports and feature requests?**
+
+You can create an issue [here](https://gitea.bbaovanc.com/bbaovanc/imgupload/issues).
+
+**How do I use this program?**
+
+See [Installation](#installation)
+
+**I want to make a pull request. Where should I do that?**
+
+First, fork [this repository](https://gitea.bbaovanc.com/bbaovanc/imgupload). If you don't have an account on my Gitea site yet, you can either create one, or sign in using your GitHub account. Commit your changes to your fork, and then create a pull request.
+
+---
+
+## Installation
+
 1. Clone the repository: `git clone https://gitea.bbaovanc.com/bbaovanc/imgupload.git`
 2. Enter the imgupload directory: `cd imgupload`
 3. Create a virtualenv: `python3 -m venv env`
 4. Enter the virtualenv: `source env/bin/activate`
 5. Install dependencies: `python3 -m pip install -r requirements.txt`
-6. Run the Flask app
+6. [Run the Flask app](#running-the-flask-App)
 
 ---
 
 ## Running the Flask app
 
 ### Using uWSGI
+
 [https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html)
 
 Instructions specific to imgupload are coming soon

@@ -5,7 +5,7 @@
 imgupload is a Flask + uWSGI application to serve as an all-purpose image/file uploader over POST requests.
 
 ### Installation
-1. Clone the repository: `git clone https://github.com/BBaoVanC/imgupload.git`
+1. Clone the repository: `git clone https://gitea.bbaovanc.com/bbaovanc/imgupload.git`
 2. Enter the imgupload directory: `cd imgupload`
 3. Create a virtualenv: `python3 -m venv env`
 4. Enter the virtualenv: `source env/bin/activate`

@@ -31,27 +31,51 @@ First, fork [this repository](https://git.bbaovanc.com/bbaovanc/imgupload). If y
 
 ## Installation
 
-1. Clone the repository: `git clone https://git.bbaovanc.com/bbaovanc/imgupload.git`
-2. Enter the imgupload directory: `cd imgupload`
-3. Create a virtualenv: `python3 -m venv env`
-4. Enter the virtualenv: `source env/bin/activate`
-5. Install dependencies: `python3 -m pip install -r requirements.txt`
-6. [Run the Flask app](#running-the-flask-app)
-
----
-
-## Running the Flask app
-
 ### Using uWSGI
 
-[https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html)
+Note: replace `www-data` with whatever user your webserver runs as.
 
-Instructions specific to imgupload are coming soon
+1. Make /srv/imgupload: `sudo mkdir /srv/imgupload`
+2. Change ownership of /srv/imgupload: `sudo chown www-data:www-data /srv/imgupload`
+3. Enter www-data user: `sudo su www-data`
+4. Change directories to /srv/imgupload: `cd /srv/imgupload`
+5. Clone the repository: `git clone https://git.bbaovanc.com/bbaovanc/imgupload.git`
+6. Enter the imgupload directory: `cd imgupload`
+7. Create a virtualenv: `python3 -m venv env`
+8. Enter the virtualenv: `source env/bin/activate`
+9. Install dependencies: `python3 -m pip install -r requirements.txt`
+10. Leave the www-data user: `exit`
+11. Copy the default uWSGI configuration: `sudo cp /srv/imgupload/uwsgi.ini.default /etc/uwsgi/apps-available/imgupload.ini`
+12. Modify `/etc/uwsgi/apps-available/imgupload.ini` to your preferences
+13. Enable imgupload: `sudo ln -s /etc/uwsgi/apps-available/imgupload.ini /etc/uwsgi/apps-enabled/`
+14. Restart uWSGI: `sudo systemctl restart uwsgi`
+15. Set up your webserver to proxy the uwsgi.sock
+
+Example NGINX location block:
+```nginx
+location /upload {
+    include uwsgi_params;
+    uwsgi_pass unix:/srv/imgupload/uwsgi.sock;
+    client_max_body_size 25M;
+}
+```
 
 ### Using Flask development server
 
+
+#### Setup
+
 ```shell
-$ source env/bin/activate  # if you haven't already entered the virtualenv
+$ git clone https://git.bbaovanc.com/bbaovanc/imgupload.git
+$ cd imgupload
+$ python3 -m venv env
+$ source env/bin/activate
+$ pip3 install -r requirements.txt
+```
+
+#### Run
+
+```shell
 $ export FLASK_APP=imgupload.py
 $ flask run
 ```

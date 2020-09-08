@@ -1,0 +1,12 @@
+[uwsgi]
+socket = /srv/imgupload/uwsgi.sock
+chmod-socket = 755
+chdir = /srv/imgupload
+venv = /srv/imgupload/env
+master = true
+module = imgupload:app
+processes = 1
+threads = 1
+uid = www-data
+gid = www-data
+plugins = python3,logfile

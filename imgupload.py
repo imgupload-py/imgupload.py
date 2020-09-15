@@ -67,9 +67,21 @@ def upload():
 
                 fext = Path(f.filename).suffix  # get the uploaded extension
                 if allowed_extension(fext):  # if the extension is allowed
-                    print("Generating file with extension {0}".format(fext))
-                    fname = functions.generate_name() + fext  # generate file name
-                    print("Generated name: {0}".format(fname))
+                    if not "imageName" in request.form.keys():
+                        print("Generating file with extension {0}".format(fext))
+                        fname = functions.generate_name() + fext  # generate file name
+                        print("Generated name: {0}".format(fname))
+                    else:
+                        fname = request.form["imageName"]
+                        if len(fname) > 0:
+                            print("Request imageName: {0}".format(fname))
+                            if not fname.lower().endswith(fext.lower()):  # if requested name doesn't have the correct extension
+                                fname += fext  # add the extension
+                                print("Added extension; new filename: {0}".format(fname))
+                        else:
+                            print("Requested filename is blank!")
+                            fname = functions.generate_name() + fext  # generate a valid filename
+                            print("Generated name: {0}".format(fname))
 
                     if f:  # if the uploaded image exists
                         print("Uploaded image exists")

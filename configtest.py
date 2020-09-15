@@ -85,8 +85,6 @@ if "ROOTURL" in checksettings:
         pass
     else:
         rooturl_good = False
-        print(settings.ROOTURL)
-        print(settings.ROOTURL.startswith("https://"))
         print("[!] ROOTURL does not start with `http://` or `https://`! This may cause issues!")
     if not settings.ROOTURL.endswith("/"):
         rooturl_good = False

@@ -73,6 +73,9 @@ def upload():
 
                     if f:  # if the uploaded image exists
                         print("Uploaded image exists")
+                        if Path(os.path.join(settings.UPLOAD_FOLDER, fname)).is_file():
+                            print("Requested filename already exists!")
+                            return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
                         f.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image
                         print("Saved to {0}".format(fname))
                         url = settings.ROOTURL + fname  # construct the url to the image

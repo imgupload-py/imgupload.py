@@ -35,7 +35,7 @@ unset_settings = [i for i in defaults.keys() if i not in dir(settings)]
 if len(unset_settings) > 0:
     for unset in unset_settings:
         checksettings.remove(unset)
-        print("[!] {0} is unset. The default value is type {1} with value {2}".format(unset, deftypes[unset].__name__, defaults[unset]))
+        print(f"[!] {unset} is unset. The default value is type {deftypes[unset].__name__} with value {defaults[unset]}")
 else:
     print("[" + u"\u2713" + "] Found all required settings!")
 
@@ -45,7 +45,7 @@ typesgood = True
 typeswrong = []
 for testtype in checksettings:
     if type(getattr(settings, testtype)) is not deftypes[testtype]:
-        print("[!] {0} requires {1}, but is {2}".format(testtype, deftypes[testtype].__name__, type(getattr(settings, testtype)).__name__))
+        print(f"[!] {testtype} requires {deftypes[testtype].__name__}, but is {type(getattr(settings, testtype)).__name__}")
         typeswrong.append(testtype)
         typesgood = False
 
@@ -63,7 +63,7 @@ if "ALLOWED_EXTENSIONS" in checksettings:
     if len(invalid_exts) > 0:
         print("[!] The following extensions listed in ALLOWED_EXTENSIONS are invalid:")
         for e in invalid_exts:
-            print("    {0} is listed in ALLOWED_EXTENSIONS, but doesn't start with a .".format(e))
+            print(f"    {e} is listed in ALLOWED_EXTENSIONS, but doesn't start with a .")
     else:
         print("[" + u"\u2713" + "] ALLOWED_EXTENSIONS is good!")
 
@@ -73,7 +73,7 @@ uploadfolder_exists = True
 if "UPLOAD_FOLDER" in checksettings:
     if not os.path.isdir(settings.UPLOAD_FOLDER):
         uploadfolder_exists = False
-        print("[!] The directory set in UPLOAD_FOLDER ('{0}') doesn't exist!".format(settings.UPLOAD_FOLDER))
+        print(f"[!] The directory set in UPLOAD_FOLDER ('{settings.UPLOAD_FOLDER}') doesn't exist!")
     else:
         print("[" + u"\u2713" + "] UPLOAD_FOLDER exists!")
 
@@ -92,14 +92,14 @@ if "ROOTURL" in checksettings:
 
     if not rooturl_good:
         print("    With your current settings, this is what a generated url would look like:")
-        print("    {0}example.png".format(settings.ROOTURL))
+        print(f"    {settings.ROOTURL}example.png")
     else:
         print("[" + u"\u2713" + "] ROOTURL is good!")
 
 
 # Ask the user if SAVELOG is the intended filename
 if "SAVELOG" in checksettings:
-    print("[*] SAVELOG was interpreted to be {0}".format(settings.SAVELOG))
+    print(f"[*] SAVELOG was interpreted to be {settings.SAVELOG}")
     print("[*] If this is not the intended filename, please fix it.")
 
 
@@ -111,32 +111,32 @@ if len(unset_settings) > 0:
     summarygood = False
     print("Unset settings:")
     for unset in unset_settings:
-        print("    {0}".format(unset))
+        print(f"    {unset}")
 
 if len(typeswrong) > 0:
     summarygood = False
     print("Incorrect types:")
     for wtype in typeswrong:
-        print("    {0}".format(wtype))
+        print(f"    {wtype}")
 
 if len(invalid_exts) > 0:
     summarygood = False
     print("Invalid extensions:")
     for wext in invalid_exts:
-        print("    '{0}'".format(wext))
+        print(f"    '{wext}'")
 
 if not uploadfolder_exists:
     summarygood = False
-    print("UPLOAD_FOLDER ({0}) does not exist!".format(settings.UPLOAD_FOLDER))
+    print(f"UPLOAD_FOLDER ({settings.UPLOAD_FOLDER}) does not exist!")
 
 if not rooturl_good:
     summarygood = False
     print("ROOTURL may cause issues!")
     print("With current settings, this is what a generated URL would look like:")
-    print("{0}example.png".format(settings.ROOTURL))
+    print(f"{settings.ROOTURL}example.png")
 
 if "SAVELOG" in checksettings:
-    print("[*] SAVELOG is {0}".format(settings.SAVELOG))
+    print(f"[*] SAVELOG is {settings.SAVELOG}")
 
 if summarygood:
     print("[" + u"\u2713" + "] This configuration passes all tests!")

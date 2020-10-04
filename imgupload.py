@@ -27,11 +27,11 @@ def allowed_extension(testext):
 def log_savelog(key, ip, savedname):
     if settings.SAVELOG_KEYPREFIX > 0:
         with open(settings.SAVELOG, "a+") as slogf:
-            slogf.write("[{0}] {1}: {2} - {3}\n".format(datetime.datetime.now(), key[:settings.SAVELOG_KEYPREFIX], ip, savedname))
+            slogf.write(f"[{datetime.datetime.now()}] {key[:settings.SAVELOG_KEYPREFIX]}: {ip} - {savedname}\n")
         os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
     else:
         with open(settings.SAVELOG, "a+") as slogf:
-            slogf.write("[{0}] {1} - {2}\n".format(datetime.datetime.now(), ip, savedname))
+            slogf.write(f"[{datetime.datetime.now()}] {ip} - {savedname}\n")
         os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
 
 @app.route("/upload", methods = ["POST"])
@@ -68,20 +68,20 @@ def upload():
                 fext = Path(f.filename).suffix  # get the uploaded extension
                 if allowed_extension(fext):  # if the extension is allowed
                     if not "imageName" in request.form.keys():
-                        print("Generating file with extension {0}".format(fext))
+                        print(f"Generating file with extension {fext}")
                         fname = functions.generate_name() + fext  # generate file name
-                        print("Generated name: {0}".format(fname))
+                        print(f"Generated name: {fname}")
                     else:
                         fname = request.form["imageName"]
                         if len(fname) > 0:
-                            print("Request imageName: {0}".format(fname))
+                            print(f"Request imageName: {fname}")
                             if not fname.lower().endswith(fext.lower()):  # if requested name doesn't have the correct extension
                                 fname += fext  # add the extension
-                                print("Added extension; new filename: {0}".format(fname))
+                                print(f"Added extension; new filename: {fname}")
                         else:
                             print("Requested filename is blank!")
                             fname = functions.generate_name() + fext  # generate a valid filename
-                            print("Generated name: {0}".format(fname))
+                            print(f"Generated name: {fname}")
 
                     if f:  # if the uploaded image exists
                         print("Uploaded image exists")
@@ -89,7 +89,7 @@ def upload():
                             print("Requested filename already exists!")
                             return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
                         f.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image
-                        print("Saved to {0}".format(fname))
+                        print(f"Saved to {fname}")
                         url = settings.ROOTURL + fname  # construct the url to the image
                         if settings.SAVELOG != "/dev/null":
                             print("Saving to savelog")
@@ -106,7 +106,7 @@ def upload():
 
             else:  # if the key was not valid
                 print("Key is invalid!")
-                print("Request key: {0}".format(request.form["uploadKey"]))
+                print(f"Request key: {request.form["uploadKey"]}")
                 return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
         else:  # if uploadKey was not found in request body

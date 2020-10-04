@@ -31,7 +31,7 @@ def savekey(key):
         logging.info("uploadkeys file doesn't exist, it will be created.")
     with open("uploadkeys", "a+") as keyfile:
         keyfile.write(str(key) + "\n")  # add the key
-    logging.debug("Saved a key to uploadkeys: {0}".format(key))
+    logging.debug(f"Saved a key to uploadkeys: {key}")
 
 
 def rmkey(delkey):
@@ -85,14 +85,14 @@ def cmd_list(args):
         if len(validkeys[i]) > 6:
             showkey += "..."  # add ellipses since the key was shortened in list
 
-        print("    [{0}] {1}".format(i+1, showkey))
+        print(f"    [{i+1}] {showkey}")
 
 
 def cmd_generate(args):
     k = genkey(args.length)
-    logging.debug("Generated a new key: {0}".format(k))
+    logging.debug(f"Generated a new key: {k}")
     savekey(k)
-    print("Your new key is: {0}".format(k))
+    print(f"Your new key is: {k}")
 
 
 def cmd_add(args):
@@ -104,7 +104,6 @@ def cmd_add(args):
     print(ak)
     if input("Is the above key correct? [y/N] ").lower() == "y":
         logging.debug("Interpreted as yes")
-        ask_for_key = False
         savekey(ak)
         logging.info("Added.")
     else:
@@ -124,14 +123,14 @@ def cmd_dedupe(args):
         for d in dupes:
             r = rmkey(d)
             logging.debug(r)
-            logging.info("Removed duplicate key: {0}".format(d))
+            logging.info(f"Removed duplicate key: {d}")
     else:
         logging.info("[" + u"\u2713" + "] No duplicate keys found!")
 
 def cmd_show(args):
     for k in get_keys():
         if k[:6] == args.prefix:
-            print("Key: {0}".format(k))
+            print(f"Key: {k}")
             break
 
 

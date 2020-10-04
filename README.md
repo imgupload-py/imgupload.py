@@ -53,6 +53,7 @@ Note: replace `www-data` with whatever user your webserver runs as.
 16. Set up your webserver to proxy the uwsgi.sock
 
 Example NGINX location block:
+
 ```nginx
 location /upload {
     include uwsgi_params;
@@ -63,22 +64,21 @@ location /upload {
 
 ### Using Flask development server
 
-
 #### Setup
 
 ```shell
-$ git clone https://git.bbaovanc.com/bbaovanc/imgupload.git
-$ cd imgupload
-$ python3 -m venv env
-$ source env/bin/activate
-$ pip3 install -r requirements.txt
+git clone https://git.bbaovanc.com/bbaovanc/imgupload.git
+cd imgupload
+python3 -m venv env
+source env/bin/activate
+pip3 install -r requirements.txt
 ```
 
 #### Run
 
 ```shell
-$ export FLASK_APP=imgupload.py
-$ flask run
+export FLASK_APP=imgupload.py
+flask run
 ```
 
 ---

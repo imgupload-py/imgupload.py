@@ -35,12 +35,12 @@ First, fork [this repository](https://git.bbaovanc.com/bbaovanc/imgupload). If y
 
 Note: replace `www-data` with whatever user your webserver runs as.
 
-1. Make /srv/imgupload: `sudo mkdir /srv/imgupload`
-2. Change ownership of /srv/imgupload: `sudo chown www-data:www-data /srv/imgupload`
-3. Enter www-data user: `sudo su www-data`
-4. Change directories to /srv/imgupload: `cd /srv/imgupload`
-5. Clone the repository: `git clone https://git.bbaovanc.com/bbaovanc/imgupload.git`
-6. Checkout the version you want (replace [version] with desired version: `git checkout [version]`
+1. Go to /srv: `cd /srv`
+2. Clone the repository: `git clone https://git.bbaovanc.com/bbaovanc/imgupload.git`
+3. Change ownership of /srv/imgupload: `sudo chown www-data:www-data /srv/imgupload`
+4. Enter www-data user: `sudo su www-data`
+5. Change directories to /srv/imgupload: `cd /srv/imgupload`
+6. Checkout the version you want (replace [version] with desired version tag: `git checkout [version]`
 7. Enter the imgupload directory: `cd imgupload`
 8. Create a virtualenv: `python3 -m venv env`
 9. Enter the virtualenv: `source env/bin/activate`

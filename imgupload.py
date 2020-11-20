@@ -106,7 +106,7 @@ def upload():
 
             else:  # if the key was not valid
                 print("Key is invalid!")
-                print(f"Request key: {request.form["uploadKey"]}")
+                print(f"Request key: {request.form['uploadKey']}")
                 return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
         else:  # if uploadKey was not found in request body

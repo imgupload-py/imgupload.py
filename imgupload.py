@@ -10,6 +10,7 @@ from flask_api import status
 from pathlib import Path
 import os
 import datetime
+from PIL import Image
 
 import settings  # app settings (such as allowed extensions)
 import functions  # custom functions
@@ -88,7 +89,14 @@ def upload():
                         if Path(os.path.join(settings.UPLOAD_FOLDER, fname)).is_file():
                             print("Requested filename already exists!")
                             return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
-                        f.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image
+
+                        f.save(f"/tmp/{fname}")  # save the image temporarily (before removing EXIF)
+                        image = Image.open(f"/tmp/{fname}")
+                        data = list(image.getdata())
+                        stripped = Image.new(image.mode, image.size)
+                        stripped.putdata(data)
+                        stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
+
                         print(f"Saved to {fname}")
                         url = settings.ROOTURL + fname  # construct the url to the image
                         if settings.SAVELOG != "/dev/null":

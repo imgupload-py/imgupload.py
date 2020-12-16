@@ -5,7 +5,7 @@ imgupload.py
 Flask application for processing images uploaded through POST requests.
 """
 
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify
 from flask_api import status
 from pathlib import Path
 import os

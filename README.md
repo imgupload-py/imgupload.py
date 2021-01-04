@@ -1,11 +1,11 @@
 # imgupload
 
-<!---![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/BBaoVanC/imgupload/master?color=purple)
-![GitHub repo size](https://img.shields.io/github/repo-size/bbaovanc/imgupload?color=purple)
-![GitHub All Releases](https://img.shields.io/github/downloads/bbaovanc/imgupload/total?color=purple)
-![GitHub issues](https://img.shields.io/github/issues/bbaovanc/imgupload?color=purple)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/bbaovanc/imgupload?color=purple)
-![GitHub](https://img.shields.io/github/license/bbaovanc/imgupload?color=purple)-->
+![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/BBaoVanC/imgupload/master?color=blue)
+![GitHub repo size](https://img.shields.io/github/repo-size/bbaovanc/imgupload?color=blue)
+![GitHub All Releases](https://img.shields.io/github/downloads/bbaovanc/imgupload/total?color=blue)
+![GitHub issues](https://img.shields.io/github/issues/bbaovanc/imgupload?color=blue)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/bbaovanc/imgupload?color=blue)
+![GitHub license](https://img.shields.io/github/license/bbaovanc/imgupload?color=blue)
 
 ## What is imgupload?
 

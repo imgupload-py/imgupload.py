@@ -7,6 +7,17 @@
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/bbaovanc/imgupload?color=blue)
 ![GitHub license](https://img.shields.io/github/license/bbaovanc/imgupload?color=blue)
 
+- [imgupload](#imgupload)
+  - [What is imgupload?](#what-is-imgupload)
+  - [FAQ](#faq)
+  - [Dependencies](#dependencies)
+  - [Installation](#installation)
+    - [Using uWSGI](#using-uwsgi)
+    - [Using Flask development server](#using-flask-development-server)
+      - [Setup](#setup)
+      - [Run](#run)
+  - [License](#license)
+
 ## What is imgupload?
 
 imgupload is a Flask + uWSGI application to serve as an all-purpose image uploader over POST requests.
@@ -29,6 +40,15 @@ First, [fork the repository](https://github.com/BBaoVanC/imgupload/fork). Then, 
 
 ---
 
+## Dependencies
+
+- `python3`
+- `python3-pip`
+- `python3-venv`
+- `git` (for easy updating)
+
+---
+
 ## Installation
 
 ### Using uWSGI
@@ -37,20 +57,19 @@ Note: replace `www-data` with whatever user your webserver runs as.
 
 1. Go to /srv: `cd /srv`
 2. Clone the repository: `git clone https://github.com/BBaoVanC/imgupload.git`
-3. Change ownership of /srv/imgupload: `sudo chown www-data:www-data /srv/imgupload`
+3. Change ownership of /srv/imgupload: `sudo chown -R www-data: /srv/imgupload`
 4. Enter www-data user: `sudo su www-data`
 5. Change directories to /srv/imgupload: `cd /srv/imgupload`
 6. Checkout the version you want (replace [version] with desired version tag: `git checkout [version]`
-7. Enter the imgupload directory: `cd imgupload`
-8. Create a virtualenv: `python3 -m venv env`
-9. Enter the virtualenv: `source env/bin/activate`
-10. Install dependencies: `python3 -m pip install -r requirements.txt`
-11. Leave the www-data user: `exit`
-12. Copy the default uWSGI configuration: `sudo cp /srv/imgupload/uwsgi.ini.default /etc/uwsgi/apps-available/imgupload.ini`
-13. Modify `/etc/uwsgi/apps-available/imgupload.ini` to your preferences
-14. Enable imgupload: `sudo ln -s /etc/uwsgi/apps-available/imgupload.ini /etc/uwsgi/apps-enabled/`
-15. Restart uWSGI: `sudo systemctl restart uwsgi`
-16. Set up your webserver to proxy the uwsgi.sock
+7. Create a virtualenv: `python3 -m venv env`
+8. Enter the virtualenv: `source env/bin/activate`
+9. Install dependencies: `python3 -m pip install -r requirements.txt`
+10. Leave the www-data user: `exit`
+11. Copy the default uWSGI configuration: `sudo cp /srv/imgupload/uwsgi.ini.default /etc/uwsgi/apps-available/imgupload.ini`
+12. Modify `/etc/uwsgi/apps-available/imgupload.ini` to your preferences
+13. Enable imgupload: `sudo ln -s /etc/uwsgi/apps-available/imgupload.ini /etc/uwsgi/apps-enabled/`
+14. Restart uWSGI: `sudo systemctl restart uwsgi`
+15. Set up your webserver to proxy the uwsgi.sock
 
 Example NGINX location block:
 

@@ -9,7 +9,7 @@
 
 ## What is imgupload?
 
-imgupload is a Flask + uWSGI application to serve as an all-purpose image/file uploader over POST requests.
+imgupload is a Flask + uWSGI application to serve as an all-purpose image uploader over POST requests.
 
 ---
 
@@ -17,7 +17,7 @@ imgupload is a Flask + uWSGI application to serve as an all-purpose image/file u
 
 **Where can I send bug reports and feature requests?**
 
-You can create an issue [here](https://git.bbaovanc.com/bbaovanc/imgupload/issues).
+You can create an issue [here](https://github.com/BBaoVanC/imgupload/issues).
 
 **How do I use this program?**
 
@@ -25,7 +25,7 @@ See [Installation](#installation)
 
 **I want to make a pull request. Where should I do that?**
 
-First, fork [this repository](https://git.bbaovanc.com/bbaovanc/imgupload). If you don't have an account on my Gitea site yet, you can either create one, or sign in using your GitHub account. Commit your changes to your fork, and then create a pull request.
+First, [fork the repository](https://github.com/BBaoVanC/imgupload/fork). Then, commit your changes to your fork, and create a pull request.
 
 ---
 
@@ -36,7 +36,7 @@ First, fork [this repository](https://git.bbaovanc.com/bbaovanc/imgupload). If y
 Note: replace `www-data` with whatever user your webserver runs as.
 
 1. Go to /srv: `cd /srv`
-2. Clone the repository: `git clone https://git.bbaovanc.com/bbaovanc/imgupload.git`
+2. Clone the repository: `git clone https://github.com/BBaoVanC/imgupload.git`
 3. Change ownership of /srv/imgupload: `sudo chown www-data:www-data /srv/imgupload`
 4. Enter www-data user: `sudo su www-data`
 5. Change directories to /srv/imgupload: `cd /srv/imgupload`
@@ -67,7 +67,7 @@ location /upload {
 #### Setup
 
 ```shell
-git clone https://git.bbaovanc.com/bbaovanc/imgupload.git
+git clone https://github.com/BBaoVanC/imgupload.git
 cd imgupload
 python3 -m venv env
 source env/bin/activate
@@ -85,4 +85,4 @@ flask run
 
 ## License
 
-_imgupload_ is licensed under the GPLv3 license. For more information, please refer to [`LICENSE`](https://git.bbaovanc.com/bbaovanc/imgupload/src/branch/master/LICENSE)
+_imgupload_ is licensed under the GPLv3 license. For more information, please refer to [`LICENSE`](https://github.com/BBaoVanC/imgupload/blob/master/LICENSE) for more information.

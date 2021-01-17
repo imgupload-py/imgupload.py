@@ -167,6 +167,9 @@ def upload():
         else:  # if uploadKey was not found in request body
             print("No uploadKey found in request!")
             return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
+    else:
+        print("Somehow the request method was not POST!")
+        return jsonify({'status': 'error', 'error': 'WRONG_METHOD'}), status.HTTP_405_METHOD_NOT_ALLOWED
 
 if __name__ == "__main__":
     print("Run with `flask` or a WSGI server!")

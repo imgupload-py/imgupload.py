@@ -118,7 +118,7 @@ def upload():
                         url = settings.ROOTURL + fname  # construct the url to the image
                         path_bin = ''.join('{:08b}'.format(b) for b in fname.encode('utf-8'))
                         path_txt = path_bin.replace('0', u'\u200b').replace('1', u'\u200c')
-                        utf8_url = settings.ROOTURL + path_txt
+                        utf8_url = settings.ROOTURL + "utf8/" + path_txt
                         if settings.SAVELOG != "/dev/null":
                             print("Saving to savelog")
                             log_savelog(request.form["uploadKey"], request.remote_addr, fname)

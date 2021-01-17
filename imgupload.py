@@ -59,6 +59,12 @@ def utf8_encode_filename(filename):
 def encode(decoded_url):
     return utf8_encode_filename(decoded_url)
 
+
+@app.route("/decode/<encoded_url>", methods = ["GET"])
+def decode(encoded_url):
+    return utf8_decode_filename(encoded_url)
+
+
 @app.route("/utf8/<encoded_url>", methods = ["GET"])
 def utf8(encoded_url):
     print("Received /utf8/ request")

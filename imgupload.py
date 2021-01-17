@@ -37,14 +37,37 @@ def log_savelog(key, ip, savedname):
             slogf.write(f"[{datetime.datetime.now()}] {ip} - {savedname}\n")
         os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
 
+
+class EncodeDecodeError(Exception):
+    pass
+
+def utf8_decode_filename(filename):
+    s = filename.replace(u"\u200b", "0").replace(u"\u200c", "1")
+    if not re.compile("^[01]+$").match(s):
+        raise EncodeDecodeError
+    decstr = ''.join(chr(int(s[i*8:i*8+8],2)) for i in range(len(s)//8))
+    return decstr
+
+
+def utf8_encode_filename(filename):
+    fname_bin = ''.join('{:08b}'.format(b) for b in filename.encode('utf-8'))
+    fname_txt = fname_bin.replace('0', u'\u200b').replace('1', u'\u200c')
+    return fname_txt
+
+
+@app.route("/encode/<decoded_url>", methods = ["GET"])
+def encode(decoded_url):
+    return utf8_encode_filename(decoded_url)
+
 @app.route("/utf8/<encoded_url>", methods = ["GET"])
 def utf8(encoded_url):
     print("Received /utf8/ request")
-    s = encoded_url.replace(u"\u200b", "0").replace(u"\u200c", "1")
-    if not re.compile("^[01]+$").match(s):
-        print("URL doesn't contain only 200b and 200c")
+    try:
+        decstr = utf8_decode_filename(encoded_url)
+    except EncodeDecodeError:
+        print("filename doesn't contain only 200b and 200c")
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
-    decstr = ''.join(chr(int(s[i*8:i*8+8],2)) for i in range(len(s)//8))
+
     imgpath = Path(os.path.join(settings.UPLOAD_FOLDER, decstr))
     if imgpath.is_file():
         return send_file(imgpath)
@@ -116,8 +139,7 @@ def upload():
 
                         print(f"Saved to {fname}")
                         url = settings.ROOTURL + fname  # construct the url to the image
-                        path_bin = ''.join('{:08b}'.format(b) for b in fname.encode('utf-8'))
-                        path_txt = path_bin.replace('0', u'\u200b').replace('1', u'\u200c')
+                        path_txt = utf8_encode_filename(fname)
                         utf8_url = settings.ROOTURL + "utf8/" + path_txt
                         if settings.SAVELOG != "/dev/null":
                             print("Saving to savelog")

@@ -7,10 +7,12 @@ Flask application for processing images uploaded through POST requests.
 
 from flask import Flask, request, jsonify
 from flask_api import status
+from flask.helpers import send_file
 from pathlib import Path
 import os
 import datetime
 from PIL import Image
+import re
 
 import settings  # app settings (such as allowed extensions)
 import functions  # custom functions
@@ -34,6 +36,21 @@ def log_savelog(key, ip, savedname):
         with open(settings.SAVELOG, "a+") as slogf:
             slogf.write(f"[{datetime.datetime.now()}] {ip} - {savedname}\n")
         os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
+
+@app.route("/utf8/<encoded_url>", methods = ["GET"])
+def utf8(encoded_url):
+    print("Received /utf8/ request")
+    s = encoded_url.replace(u"\u200b", "0").replace(u"\u200c", "1")
+    if not re.compile("^[01]+$").match(s):
+        print("URL doesn't contain only 200b and 200c")
+        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
+    decstr = ''.join(chr(int(s[i*8:i*8+8],2)) for i in range(len(s)//8))
+    imgpath = Path(os.path.join(settings.UPLOAD_FOLDER, decstr))
+    if imgpath.is_file():
+        return send_file(imgpath)
+    else:
+        print(f"Not a file: {imgpath}")
+        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
 
 @app.route("/upload", methods = ["POST"])
 def upload():
@@ -99,11 +116,19 @@ def upload():
 
                         print(f"Saved to {fname}")
                         url = settings.ROOTURL + fname  # construct the url to the image
+                        path_bin = ''.join('{:08b}'.format(b) for b in fname.encode('utf-8'))
+                        path_txt = path_bin.replace('0', u'\u200b').replace('1', u'\u200c')
+                        utf8_url = settings.ROOTURL + path_txt
                         if settings.SAVELOG != "/dev/null":
                             print("Saving to savelog")
                             log_savelog(request.form["uploadKey"], request.remote_addr, fname)
                         print("Returning json response")
-                        return jsonify({'status': 'success', 'url': url, 'name': fname, 'uploadedName': f.filename}), status.HTTP_201_CREATED
+                        return jsonify({'status': 'success',
+                                        'url': url,
+                                        'utf8_url': utf8_url,
+                                        'name': fname,
+                                        'uploadedName': f.filename,
+                                        }), status.HTTP_201_CREATED
                     else:  # this shouldn't happen
                         print("Um... uploaded image... is nonexistent? Please report this error!")
                         return jsonify({'status': 'error', 'error': 'UPLOADED_IMAGE_FAILED_SANITY_CHECK_1'}), status.HTTP_400_BAD_REQUEST

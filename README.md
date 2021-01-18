@@ -74,7 +74,7 @@ Note: replace `www-data` with whatever user your webserver runs as.
 Example NGINX location block:
 
 ```nginx
-location ~ ^/(upload|utf8|encode|decode) {
+location ~ ^/(upload|utf8|encode|decode|i|i8) {
     include uwsgi_params;
     uwsgi_pass unix:/srv/imgupload/uwsgi.sock;
     client_max_body_size 25M;

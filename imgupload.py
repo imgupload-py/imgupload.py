@@ -5,9 +5,8 @@ imgupload.py
 Flask application for processing images uploaded through POST requests.
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from flask_api import status
-from flask.helpers import send_file
 from pathlib import Path
 import os
 import datetime
@@ -74,12 +73,7 @@ def utf8(encoded_url):
         print("filename doesn't contain only 200b and 200c")
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
 
-    imgpath = Path(os.path.join(settings.UPLOAD_FOLDER, decstr))
-    if imgpath.is_file():
-        return send_file(imgpath)
-    else:
-        print(f"Not a file: {imgpath}")
-        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
+    return redirect(settings.ROOTURL + decstr, 307)
 
 @app.route("/upload", methods = ["POST"])
 def upload():

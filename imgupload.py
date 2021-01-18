@@ -5,13 +5,15 @@ imgupload.py
 Flask application for processing images uploaded through POST requests.
 """
 
+
 from flask import Flask, request, jsonify, redirect, render_template
 from flask_api import status
-from pathlib import Path
+
 import os
-import datetime
-from PIL import Image
 import re
+import datetime
+from pathlib import Path
+from PIL import Image
 
 import settings  # app settings (such as allowed extensions)
 import functions  # custom functions
@@ -40,17 +42,18 @@ def log_savelog(key, ip, savedname):
 class EncodeDecodeError(Exception):
     pass
 
+
 def utf8_decode_filename(filename):
-    s = filename.replace(u"\u200b", "0").replace(u"\u200c", "1")
-    if not re.compile("^[01]+$").match(s):
+    s = filename.replace(u"\u200b", "0").replace(u"\u200c", "1")  # convert to string of binary bits
+    if not re.compile("^[01]+$").match(s):  # if it's not just ones and zeros
         raise EncodeDecodeError
-    decstr = ''.join(chr(int(s[i*8:i*8+8],2)) for i in range(len(s)//8))
+    decstr = ''.join(chr(int(s[i*8:i*8+8],2)) for i in range(len(s)//8))  # convert to text
     return decstr
 
 
 def utf8_encode_filename(filename):
-    fname_bin = ''.join('{:08b}'.format(b) for b in filename.encode('utf-8'))
-    fname_txt = fname_bin.replace('0', u'\u200b').replace('1', u'\u200c')
+    fname_bin = ''.join('{:08b}'.format(b) for b in filename.encode('utf-8'))  # convert text to string of ones and zeros
+    fname_txt = fname_bin.replace('0', u'\u200b').replace('1', u'\u200c')  # replace ones and zeros with invisible chars
     return fname_txt
 
 
@@ -78,9 +81,9 @@ def utf8(encoded_url):
 
 @app.route("/i/<image>", methods = ["GET"])
 def i(image):
-    path = Path(os.path.join(settings.UPLOAD_FOLDER, image))
-    url = settings.ROOTURL + image
-    if path.is_file():
+    path = Path(os.path.join(settings.UPLOAD_FOLDER, image))  # create absolute path
+    url = settings.ROOTURL + image  # create full url
+    if path.is_file():  # if image exists
         return render_template("i.html", url = url)
     else:
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
@@ -93,9 +96,9 @@ def i8(image):
     except EncodeDecodeError:
         print("filename doesn't contain only 200b and 200c")
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
-    path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))
-    url = settings.ROOTURL + decimg
-    if path.is_file():
+    path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))  # create absolute path
+    url = settings.ROOTURL + decimg  # create full url
+    if path.is_file():  # if the image exists
         return render_template("i.html", url = url)
     else:
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
@@ -106,11 +109,11 @@ def upload():
     if request.method == "POST":  # sanity check: make sure it's a POST request
         print("Request method was POST!")
 
-        with open("uploadkeys", "r") as keyfile:  # load valid keys
-            validkeys = keyfile.readlines()
-        validkeys = [x.strip("\n") for x in validkeys]
+        with open("uploadkeys", "r") as keyfile:
+            validkeys = keyfile.readlines()  # load valid keys
+        validkeys = [x.strip("\n") for x in validkeys]  # remove newlines
         while "" in validkeys:
-            validkeys.remove("")
+            validkeys.remove("")  # remove blank keys
         print("Loaded validkeys")
 
         if "uploadKey" in request.form:  # if an uploadKey was provided
@@ -134,29 +137,31 @@ def upload():
 
                 fext = Path(f.filename).suffix  # get the uploaded extension
                 if allowed_extension(fext):  # if the extension is allowed
-                    if not "imageName" in request.form.keys():
+                    if not "imageName" in request.form.keys():  # if an image name wasn't provided
                         print(f"Generating file with extension {fext}")
                         fname = functions.generate_name() + fext  # generate file name
                         print(f"Generated name: {fname}")
-                    else:
-                        fname = request.form["imageName"]
-                        if len(fname) > 0:
+                    else:  # if a name was requested
+                        fname = request.form["imageName"]  # get the requested image name
+                        if len(fname) > 0:  # if the requested name isn't blank
                             print(f"Request imageName: {fname}")
                             if not fname.lower().endswith(fext.lower()):  # if requested name doesn't have the correct extension
                                 fname += fext  # add the extension
                                 print(f"Added extension; new filename: {fname}")
-                        else:
+                        else:  # if the requested name is blank
                             print("Requested filename is blank!")
                             fname = functions.generate_name() + fext  # generate a valid filename
                             print(f"Generated name: {fname}")
 
                     if f:  # if the uploaded image exists
                         print("Uploaded image exists")
+
                         if Path(os.path.join(settings.UPLOAD_FOLDER, fname)).is_file():
                             print("Requested filename already exists!")
                             return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
 
                         f.save(f"/tmp/{fname}")  # save the image temporarily (before removing EXIF)
+
                         image = Image.open(f"/tmp/{fname}")
                         data = list(image.getdata())
                         stripped = Image.new(image.mode, image.size)
@@ -164,20 +169,25 @@ def upload():
                         stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
 
                         print(f"Saved to {fname}")
+
                         url = settings.ROOTURL + fname  # construct the url to the image
-                        path_txt = utf8_encode_filename(fname)
-                        utf8_url = settings.ROOTURL + "utf8/" + path_txt
+
+                        path_txt = utf8_encode_filename(fname)  # encode the filename
+                        utf8_url = settings.ROOTURL + "utf8/" + path_txt  # create the invisible encoded url
+
                         if settings.SAVELOG != "/dev/null":
                             print("Saving to savelog")
                             log_savelog(request.form["uploadKey"], request.remote_addr, fname)
+
                         print("Returning json response")
-                        return jsonify({'status': 'success',
-                                        'url': url,
-                                        'utf8_url': utf8_url,
-                                        'name': fname,
-                                        'uploadedName': f.filename,
+                        return jsonify({'status'        : 'success',
+                                        'url'           : url,          # ex. https://example.com/AbcD1234.png
+                                        'utf8_url'      : utf8_url,     # invisible encoded form
+                                        'name'          : fname,        # filename
+                                        'uploadedName'  : f.filename,   # name that was uploaded
                                         }), status.HTTP_201_CREATED
-                    else:  # this shouldn't happen
+
+                    else:  # if the image doesn't exist, somehow
                         print("Um... uploaded image... is nonexistent? Please report this error!")
                         return jsonify({'status': 'error', 'error': 'UPLOADED_IMAGE_FAILED_SANITY_CHECK_1'}), status.HTTP_400_BAD_REQUEST
 
@@ -193,7 +203,7 @@ def upload():
         else:  # if uploadKey was not found in request body
             print("No uploadKey found in request!")
             return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
-    else:
+    else:  # if the request method wasn't post (this cannot happen)
         print("Somehow the request method was not POST!")
         return jsonify({'status': 'error', 'error': 'WRONG_METHOD'}), status.HTTP_405_METHOD_NOT_ALLOWED
 

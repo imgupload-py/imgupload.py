@@ -84,7 +84,7 @@ def i8(image):
         print("filename doesn't contain only 200b and 200c")
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
     path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))
-    url = settings.ROOTURL + image
+    url = settings.ROOTURL + "utf8/" + image
     if path.is_file():
         return render_template("i8.html", url = url)
     else:

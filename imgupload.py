@@ -76,6 +76,16 @@ def utf8(encoded_url):
     return redirect(settings.ROOTURL + decstr, 307)
 
 
+@app.route("/i/<image>", methods = ["GET"])
+def i(image):
+    path = Path(os.path.join(settings.UPLOAD_FOLDER, image))
+    url = settings.ROOTURL + image
+    if path.is_file():
+        return render_template("i.html", url = url)
+    else:
+        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
+
+
 @app.route("/i8/<image>", methods = ["GET"])
 def i8(image):
     try:
@@ -86,7 +96,7 @@ def i8(image):
     path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))
     url = settings.ROOTURL + decimg
     if path.is_file():
-        return render_template("i8.html", url = url)
+        return render_template("i.html", url = url)
     else:
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
 

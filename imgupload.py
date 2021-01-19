@@ -6,8 +6,9 @@ Flask application for processing images uploaded through POST requests.
 """
 
 
-from flask import Flask, request, jsonify, redirect, render_template
+from flask import Flask, request, jsonify, render_template
 from flask_api import status
+from flask.helpers import send_file
 
 import os
 import re
@@ -68,7 +69,21 @@ def decode(encoded_url):
 
 
 @app.route("/fancy/<image>", methods = ["GET"])
-def i8(image):
+def fancy(image):
+    try:
+        decimg = utf8_decode_filename(image)
+    except EncodeDecodeError:
+        print("filename doesn't contain only 200b and 200c")
+        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
+    path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))  # create absolute path
+    if path.is_file():  # if the image exists
+        return send_file(path)
+    else:
+        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
+
+
+@app.route("/discord/<image>", methods = ["GET"])
+def discord(image):
     try:
         decimg = utf8_decode_filename(image)
     except EncodeDecodeError:
@@ -152,6 +167,7 @@ def upload():
 
                         path_txt = utf8_encode_filename(fname)  # encode the filename
                         fancy_url = settings.ROOTURL + "fancy/" + path_txt  # create the invisible encoded url
+                        discord_url = settings.ROOTURL + "discord/" + path_txt  # create the invisible encoded url
 
                         if settings.SAVELOG != "/dev/null":
                             print("Saving to savelog")
@@ -160,7 +176,8 @@ def upload():
                         print("Returning json response")
                         return jsonify({'status'        : 'success',
                                         'url'           : url,          # ex. https://example.com/AbcD1234.png
-                                        'fancy_url'     : fancy_url,     # invisible encoded form
+                                        'fancy_url'     : fancy_url,    # invisible encoded form
+                                        'discord_url'   : discord_url,  # fancy_url but also embed instead of direct file
                                         'name'          : fname,        # filename
                                         'uploadedName'  : f.filename,   # name that was uploaded
                                         }), status.HTTP_201_CREATED

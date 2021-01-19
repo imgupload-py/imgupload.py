@@ -67,29 +67,7 @@ def decode(encoded_url):
     return utf8_decode_filename(encoded_url)
 
 
-@app.route("/utf8/<encoded_url>", methods = ["GET"])
-def utf8(encoded_url):
-    print("Received /utf8/ request")
-    try:
-        decstr = utf8_decode_filename(encoded_url)
-    except EncodeDecodeError:
-        print("filename doesn't contain only 200b and 200c")
-        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
-
-    return redirect(settings.ROOTURL + decstr, 307)
-
-
-@app.route("/i/<image>", methods = ["GET"])
-def i(image):
-    path = Path(os.path.join(settings.UPLOAD_FOLDER, image))  # create absolute path
-    url = settings.ROOTURL + image  # create full url
-    if path.is_file():  # if image exists
-        return render_template("i.html", url = url)
-    else:
-        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
-
-
-@app.route("/i8/<image>", methods = ["GET"])
+@app.route("/fancy/<image>", methods = ["GET"])
 def i8(image):
     try:
         decimg = utf8_decode_filename(image)
@@ -173,7 +151,7 @@ def upload():
                         url = settings.ROOTURL + fname  # construct the url to the image
 
                         path_txt = utf8_encode_filename(fname)  # encode the filename
-                        utf8_url = settings.ROOTURL + "utf8/" + path_txt  # create the invisible encoded url
+                        fancy_url = settings.ROOTURL + "fancy/" + path_txt  # create the invisible encoded url
 
                         if settings.SAVELOG != "/dev/null":
                             print("Saving to savelog")
@@ -182,7 +160,7 @@ def upload():
                         print("Returning json response")
                         return jsonify({'status'        : 'success',
                                         'url'           : url,          # ex. https://example.com/AbcD1234.png
-                                        'utf8_url'      : utf8_url,     # invisible encoded form
+                                        'fancy_url'     : fancy_url,     # invisible encoded form
                                         'name'          : fname,        # filename
                                         'uploadedName'  : f.filename,   # name that was uploaded
                                         }), status.HTTP_201_CREATED

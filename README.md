@@ -2,7 +2,6 @@
 
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/BBaoVanC/imgupload/master?color=blue)
 ![GitHub repo size](https://img.shields.io/github/repo-size/bbaovanc/imgupload?color=blue)
-![GitHub All Releases](https://img.shields.io/github/downloads/bbaovanc/imgupload/total?color=blue)
 ![GitHub issues](https://img.shields.io/github/issues/bbaovanc/imgupload?color=blue)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/bbaovanc/imgupload?color=blue)
 ![GitHub license](https://img.shields.io/github/license/bbaovanc/imgupload?color=blue)

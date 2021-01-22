@@ -6,9 +6,8 @@ Flask application for processing images uploaded through POST requests.
 """
 
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect
 from flask_api import status
-from flask.helpers import send_file
 
 import os
 import re
@@ -77,7 +76,7 @@ def fancy(image):
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
     path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))  # create absolute path
     if path.is_file():  # if the image exists
-        return send_file(path)
+        return redirect(settings.ROOTURL + decimg, 307)
     else:
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
 

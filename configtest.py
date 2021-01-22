@@ -11,9 +11,9 @@ import settings as settings
 
 # Default settings
 defaults = {
-    "UPLOAD_FOLDER": "/var/www/img",
+    "UPLOAD_FOLDER": "/path/to/images",
     "ALLOWED_EXTENSIONS": [".png", ".jpg", ".jpeg", ".svg", ".bmp", ".gif", ".ico",  ".webp"],
-    "ROOTURL": "https://img.bbaovanc.com/",
+    "ROOTURL": "https://example.com/",
     "SAVELOG": "savelog.log",
     "SAVELOG_CHMOD": "0o644",
     "SAVELOG_KEYPREFIX": 4,

@@ -1,0 +1,16 @@
+<html>
+    <body>
+        <form action="{{ settings.ROOTURL }}upload" method="POST" enctype="multipart/form-data">
+            <p>
+                <input type="file" name="imageUpload" id="imageUpload" />
+            </p>
+            <p>
+                <input type = "text" id = "uploadKey" name = "uploadKey" />
+                <label for = "uploadKey">uploadKey</label>
+            </p>
+            <p>
+                <input type="submit" value="submit" />
+            </p>
+        </form>
+    </body>
+</html>

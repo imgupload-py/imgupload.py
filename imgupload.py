@@ -96,9 +96,11 @@ def discord(image):
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
 
 
-@app.route("/upload", methods = ["POST"])
+@app.route("/upload", methods = ["GET", "POST"])
 def upload():
-    if request.method == "POST":  # sanity check: make sure it's a POST request
+    if request.method == "GET":
+        return render_template("upload.html", settings = settings)
+    else:
         print("Request method was POST!")
 
         with open("uploadkeys", "r") as keyfile:
@@ -197,9 +199,6 @@ def upload():
         else:  # if uploadKey was not found in request body
             print("No uploadKey found in request!")
             return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
-    else:  # if the request method wasn't post (this cannot happen)
-        print("Somehow the request method was not POST!")
-        return jsonify({'status': 'error', 'error': 'WRONG_METHOD'}), status.HTTP_405_METHOD_NOT_ALLOWED
 
 if __name__ == "__main__":
     print("Run with `flask` or a WSGI server!")

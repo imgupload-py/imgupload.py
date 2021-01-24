@@ -91,7 +91,7 @@ def discord(image):
     path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))  # create absolute path
     url = settings.ROOTURL + decimg  # create full url
     if path.is_file():  # if the image exists
-        return render_template("i.html", url = url)
+        return render_template("discord.html", url = url)
     else:
         return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
 

@@ -14,6 +14,7 @@ import re
 import datetime
 from pathlib import Path
 from PIL import Image
+import tempfile
 import encoding
 
 import settings  # app settings (such as allowed extensions)
@@ -97,15 +98,16 @@ def upload():
                     print("Requested filename already exists!")
                     return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
 
-                f.save(f"/tmp/{fname}")  # save the image temporarily (before removing EXIF)
+                with tempfile.TemporaryFile() as tmpf:
+                    f.save(tmpf)  # save the image temporarily (before removing EXIF)
 
-                image = Image.open(f"/tmp/{fname}")
-                data = list(image.getdata())
-                stripped = Image.new(image.mode, image.size)
-                stripped.putdata(data)
-                stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
+                    image = Image.open(tmpf)
+                    data = list(image.getdata())
+                    stripped = Image.new(image.mode, image.size)
+                    stripped.putdata(data)
+                    stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
 
-                print(f"Saved to {fname}")
+                    print(f"Saved to {fname}")
 
                 url = settings.ROOTURL + fname  # construct the url to the image
 

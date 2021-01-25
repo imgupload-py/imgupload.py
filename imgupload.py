@@ -25,8 +25,7 @@ app = Flask(__name__)  # app is the app
 def allowed_extension(testext):
     if testext.lower() in settings.ALLOWED_EXTENSIONS:
         return True
-    else:
-        return False
+    return False
 
 
 def log_savelog(key, ip, savedname):
@@ -44,105 +43,100 @@ def log_savelog(key, ip, savedname):
 def upload():
     if request.method == "GET":
         return render_template("upload.html", settings = settings)
-    else:
-        print("Request method was POST!")
+    print("Request method was POST!")
 
-        with open("uploadkeys", "r") as keyfile:
-            validkeys = keyfile.readlines()  # load valid keys
-        validkeys = [x.strip("\n") for x in validkeys]  # remove newlines
-        while "" in validkeys:
-            validkeys.remove("")  # remove blank keys
-        print("Loaded validkeys")
+    with open("uploadkeys", "r") as keyfile:
+        validkeys = keyfile.readlines()  # load valid keys
+    validkeys = [x.strip("\n") for x in validkeys]  # remove newlines
+    while "" in validkeys:
+        validkeys.remove("")  # remove blank keys
+    print("Loaded validkeys")
 
-        if "uploadKey" in request.form:  # if an uploadKey was provided
-            if request.form["uploadKey"] in validkeys:  # check if uploadKey is valid
-                print("Key is valid!")
+    if "uploadKey" in request.form:  # if an uploadKey was provided
+        if request.form["uploadKey"] in validkeys:  # check if uploadKey is valid
+            print("Key is valid!")
 
-                if "verify" in request.form.keys():
-                    if request.form["verify"] == "true":
-                        print("Request is asking if key is valid (it is)")
-                        return jsonify({'status': 'key_valid'})
+            if "verify" in request.form.keys():
+                if request.form["verify"] == "true":
+                    print("Request is asking if key is valid (it is)")
+                    return jsonify({'status': 'key_valid'})
 
-                if "imageUpload" in request.files:  # check if image to upload was provided
-                    f = request.files["imageUpload"]  # f is the image to upload
-                else:
-                    print("No image upload was found!")
-                    return jsonify({'status': 'error', 'error': 'NO_IMAGE_UPLOADED'}), status.HTTP_400_BAD_REQUEST
+            if "imageUpload" in request.files:  # check if image to upload was provided
+                f = request.files["imageUpload"]  # f is the image to upload
+            else:
+                print("No image upload was found!")
+                return jsonify({'status': 'error', 'error': 'NO_IMAGE_UPLOADED'}), status.HTTP_400_BAD_REQUEST
 
-                if f.filename == "":  # make sure the filename isn't blank
-                    print("Filename is blank")
-                    return jsonify({'status': 'error', 'error': 'FILENAME_BLANK'}), status.HTTP_400_BAD_REQUEST
+            if f.filename == "":  # make sure the filename isn't blank
+                print("Filename is blank")
+                return jsonify({'status': 'error', 'error': 'FILENAME_BLANK'}), status.HTTP_400_BAD_REQUEST
 
-                fext = Path(f.filename).suffix  # get the uploaded extension
-                if allowed_extension(fext):  # if the extension is allowed
-                    if not "imageName" in request.form.keys():  # if an image name wasn't provided
-                        print(f"Generating file with extension {fext}")
-                        fname = functions.generate_name() + fext  # generate file name
+            fext = Path(f.filename).suffix  # get the uploaded extension
+            if allowed_extension(fext):  # if the extension is allowed
+                if not "imageName" in request.form.keys():  # if an image name wasn't provided
+                    print(f"Generating file with extension {fext}")
+                    fname = functions.generate_name() + fext  # generate file name
+                    print(f"Generated name: {fname}")
+                else:  # if a name was requested
+                    fname = request.form["imageName"]  # get the requested image name
+                    if len(fname) > 0:  # if the requested name isn't blank
+                        print(f"Request imageName: {fname}")
+                        if not fname.lower().endswith(fext.lower()):  # if requested name doesn't have the correct extension
+                            fname += fext  # add the extension
+                            print(f"Added extension; new filename: {fname}")
+                    else:  # if the requested name is blank
+                        print("Requested filename is blank!")
+                        fname = functions.generate_name() + fext  # generate a valid filename
                         print(f"Generated name: {fname}")
-                    else:  # if a name was requested
-                        fname = request.form["imageName"]  # get the requested image name
-                        if len(fname) > 0:  # if the requested name isn't blank
-                            print(f"Request imageName: {fname}")
-                            if not fname.lower().endswith(fext.lower()):  # if requested name doesn't have the correct extension
-                                fname += fext  # add the extension
-                                print(f"Added extension; new filename: {fname}")
-                        else:  # if the requested name is blank
-                            print("Requested filename is blank!")
-                            fname = functions.generate_name() + fext  # generate a valid filename
-                            print(f"Generated name: {fname}")
 
-                    if f:  # if the uploaded image exists
-                        print("Uploaded image exists")
+                # if f:  # if the uploaded image exists
+                # not sure why the above was added, but I'll keep it here just in case
+                print("Uploaded image exists")
 
-                        if Path(os.path.join(settings.UPLOAD_FOLDER, fname)).is_file():
-                            print("Requested filename already exists!")
-                            return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
+                if Path(os.path.join(settings.UPLOAD_FOLDER, fname)).is_file():
+                    print("Requested filename already exists!")
+                    return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
 
-                        f.save(f"/tmp/{fname}")  # save the image temporarily (before removing EXIF)
+                f.save(f"/tmp/{fname}")  # save the image temporarily (before removing EXIF)
 
-                        image = Image.open(f"/tmp/{fname}")
-                        data = list(image.getdata())
-                        stripped = Image.new(image.mode, image.size)
-                        stripped.putdata(data)
-                        stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
+                image = Image.open(f"/tmp/{fname}")
+                data = list(image.getdata())
+                stripped = Image.new(image.mode, image.size)
+                stripped.putdata(data)
+                stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
 
-                        print(f"Saved to {fname}")
+                print(f"Saved to {fname}")
 
-                        url = settings.ROOTURL + fname  # construct the url to the image
+                url = settings.ROOTURL + fname  # construct the url to the image
 
-                        path_txt = encoding.encode(fname)  # encode the filename
-                        fancy_url = settings.ROOTURL + "fancy/" + path_txt  # create the invisible encoded url
-                        discord_url = settings.ROOTURL + "discord/" + path_txt  # create the invisible encoded url
+                path_txt = encoding.encode(fname)  # encode the filename
+                fancy_url = settings.ROOTURL + "fancy/" + path_txt  # create the invisible encoded url
+                discord_url = settings.ROOTURL + "discord/" + path_txt  # create the invisible encoded url
 
-                        if settings.SAVELOG != "/dev/null":
-                            print("Saving to savelog")
-                            log_savelog(request.form["uploadKey"], request.remote_addr, fname)
+                if settings.SAVELOG != "/dev/null":
+                    print("Saving to savelog")
+                    log_savelog(request.form["uploadKey"], request.remote_addr, fname)
 
-                        print("Returning json response")
-                        return jsonify({'status'        : 'success',
-                                        'url'           : url,          # ex. https://example.com/AbcD1234.png
-                                        'fancy_url'     : fancy_url,    # invisible encoded form
-                                        'discord_url'   : discord_url,  # fancy_url but also embed instead of direct file
-                                        'name'          : fname,        # filename
-                                        'uploadedName'  : f.filename,   # name that was uploaded
-                                        }), status.HTTP_201_CREATED
+                print("Returning json response")
+                return jsonify({'status'        : 'success',
+                                'url'           : url,          # ex. https://example.com/AbcD1234.png
+                                'fancy_url'     : fancy_url,    # invisible encoded form
+                                'discord_url'   : discord_url,  # fancy_url but also embed instead of direct file
+                                'name'          : fname,        # filename
+                                'uploadedName'  : f.filename,   # name that was uploaded
+                                }), status.HTTP_201_CREATED
+            else:  # if the extension was invalid
+                print("Uploaded extension is invalid!")
+                return jsonify({'status': 'error', 'error': 'INVALID_EXTENSION'}), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
-                    else:  # if the image doesn't exist, somehow
-                        print("Um... uploaded image... is nonexistent? Please report this error!")
-                        return jsonify({'status': 'error', 'error': 'UPLOADED_IMAGE_FAILED_SANITY_CHECK_1'}), status.HTTP_400_BAD_REQUEST
-
-                else:  # if the extension was invalid
-                    print("Uploaded extension is invalid!")
-                    return jsonify({'status': 'error', 'error': 'INVALID_EXTENSION'}), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
-
-            else:  # if the key was not valid
-                print("Key is invalid!")
-                print(f"Request key: {request.form['uploadKey']}")
-                return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
-
-        else:  # if uploadKey was not found in request body
-            print("No uploadKey found in request!")
+        else:  # if the key was not valid
+            print("Key is invalid!")
+            print(f"Request key: {request.form['uploadKey']}")
             return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
+
+    else:  # if uploadKey was not found in request body
+        print("No uploadKey found in request!")
+        return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
 if __name__ == "__main__":
     print("Run with `flask` or a WSGI server!")

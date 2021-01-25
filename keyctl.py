@@ -79,9 +79,9 @@ def cmd_list(args):
     validkeys = get_keys()
 
     print("List of upload keys:")
-    for i in range(len(validkeys)):
-        showkey = validkeys[i][:6]
-        if len(validkeys[i]) > 6:
+    for i, fullkey in enumerate(validkeys):
+        showkey = fullkey[:6]
+        if len(fullkey) > 6:
             showkey += "..."  # add ellipses since the key was shortened in list
 
         print(f"    [{i+1}] {showkey}")

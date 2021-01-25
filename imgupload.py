@@ -131,10 +131,10 @@ def upload():
             print("Uploaded extension is invalid!")
             return jsonify({'status': 'error', 'error': 'INVALID_EXTENSION'}), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
-        else:  # if the key was not valid
-            print("Key is invalid!")
-            print(f"Request key: {request.form['uploadKey']}")
-            return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
+        # if the key was not valid
+        print("Key is invalid!")
+        print(f"Request key: {request.form['uploadKey']}")
+        return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
     else:  # if uploadKey was not found in request body
         print("No uploadKey found in request!")

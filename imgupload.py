@@ -14,6 +14,7 @@ import re
 import datetime
 from pathlib import Path
 from PIL import Image
+import encoding
 
 import settings  # app settings (such as allowed extensions)
 import functions  # custom functions
@@ -37,63 +38,6 @@ def log_savelog(key, ip, savedname):
         with open(settings.SAVELOG, "a+") as slogf:
             slogf.write(f"[{datetime.datetime.now()}] {ip} - {savedname}\n")
         os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
-
-
-class EncodeDecodeError(Exception):
-    pass
-
-
-def utf8_decode_filename(filename):
-    s = filename.replace(u"\u200b", "0").replace(u"\u200c", "1")  # convert to string of binary bits
-    if not re.compile("^[01]+$").match(s):  # if it's not just ones and zeros
-        raise EncodeDecodeError
-    decstr = ''.join(chr(int(s[i*8:i*8+8],2)) for i in range(len(s)//8))  # convert to text
-    return decstr
-
-
-def utf8_encode_filename(filename):
-    fname_bin = ''.join('{:08b}'.format(b) for b in filename.encode('utf-8'))  # convert text to string of ones and zeros
-    fname_txt = fname_bin.replace('0', u'\u200b').replace('1', u'\u200c')  # replace ones and zeros with invisible chars
-    return fname_txt
-
-
-@app.route("/encode/<decoded_url>", methods = ["GET"])
-def encode(decoded_url):
-    return utf8_encode_filename(decoded_url)
-
-
-@app.route("/decode/<encoded_url>", methods = ["GET"])
-def decode(encoded_url):
-    return utf8_decode_filename(encoded_url)
-
-
-@app.route("/fancy/<image>", methods = ["GET"])
-def fancy(image):
-    try:
-        decimg = utf8_decode_filename(image)
-    except EncodeDecodeError:
-        print("filename doesn't contain only 200b and 200c")
-        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
-    path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))  # create absolute path
-    if path.is_file():  # if the image exists
-        return redirect(settings.ROOTURL + decimg, 307)
-    else:
-        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
-
-
-@app.route("/discord/<image>", methods = ["GET"])
-def discord(image):
-    try:
-        decimg = utf8_decode_filename(image)
-    except EncodeDecodeError:
-        print("filename doesn't contain only 200b and 200c")
-        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
-    path = Path(os.path.join(settings.UPLOAD_FOLDER, decimg))  # create absolute path
-    url = settings.ROOTURL + decimg  # create full url
-    if path.is_file():  # if the image exists
-        return render_template("discord.html", url = url)
-    else:
-        return jsonify({'status': 'error', 'error': 'NOT_FOUND'}), status.HTTP_404_NOT_FOUND
 
 
 @app.route("/upload", methods = ["GET", "POST"])
@@ -166,7 +110,7 @@ def upload():
 
                         url = settings.ROOTURL + fname  # construct the url to the image
 
-                        path_txt = utf8_encode_filename(fname)  # encode the filename
+                        path_txt = encoding.encode(fname)  # encode the filename
                         fancy_url = settings.ROOTURL + "fancy/" + path_txt  # create the invisible encoded url
                         discord_url = settings.ROOTURL + "discord/" + path_txt  # create the invisible encoded url
 

@@ -1,10 +1,10 @@
 # imgupload
 
-![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/BBaoVanC/imgupload/master?color=blue)
-![GitHub repo size](https://img.shields.io/github/repo-size/bbaovanc/imgupload?color=blue)
-![GitHub issues](https://img.shields.io/github/issues/bbaovanc/imgupload?color=blue)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/bbaovanc/imgupload?color=blue)
-![GitHub license](https://img.shields.io/github/license/bbaovanc/imgupload?color=blue)
+[![CodeFactor](https://www.codefactor.io/repository/github/imgupload-py/imgupload.py/badge)](https://www.codefactor.io/repository/github/imgupload-py/imgupload.py)
+![GitHub repo size](https://img.shields.io/github/repo-size/imgupload-py/imgupload.py?color=blue)
+![GitHub issues](https://img.shields.io/github/issues/imgupload-py/imgupload.py?color=blue)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/imgupload-py/imgupload.py?color=blue)
+![GitHub license](https://img.shields.io/github/license/imgupload-py/imgupload.py?color=blue)
 
 - [imgupload](#imgupload)
   - [What is imgupload?](#what-is-imgupload)
@@ -73,7 +73,7 @@ Note: replace `www-data` with whatever user your webserver runs as.
 Example NGINX location block:
 
 ```nginx
-location ~ ^/(upload|encode|decode|fancy|discord) {
+location /upload {
     include uwsgi_params;
     uwsgi_pass unix:/srv/imgupload/uwsgi.sock;
     client_max_body_size 25M;

@@ -44,7 +44,7 @@ else:
 typesgood = True
 typeswrong = []
 for testtype in checksettings:
-    if type(getattr(settings, testtype)) is not deftypes[testtype]:
+    if not isinstance(getattr(settings, testtype), deftypes[testtype]):
         print(f"[!] {testtype} requires {deftypes[testtype].__name__}, but is {type(getattr(settings, testtype)).__name__}")
         typeswrong.append(testtype)
         typesgood = False

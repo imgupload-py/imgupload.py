@@ -136,9 +136,9 @@ def upload():
         print(f"Request key: {request.form['uploadKey']}")
         return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
-    else:  # if uploadKey was not found in request body
-        print("No uploadKey found in request!")
-        return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
+    # if uploadKey was not found in request body
+    print("No uploadKey found in request!")
+    return jsonify({'status': 'error', 'error': 'UNAUTHORIZED'}), status.HTTP_401_UNAUTHORIZED
 
 if __name__ == "__main__":
     print("Run with `flask` or a WSGI server!")

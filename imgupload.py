@@ -125,9 +125,9 @@ def upload():
                                 'name'          : fname,        # filename
                                 'uploadedName'  : f.filename,   # name that was uploaded
                                 }), status.HTTP_201_CREATED
-            else:  # if the extension was invalid
-                print("Uploaded extension is invalid!")
-                return jsonify({'status': 'error', 'error': 'INVALID_EXTENSION'}), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+            # if the extension was invalid
+            print("Uploaded extension is invalid!")
+            return jsonify({'status': 'error', 'error': 'INVALID_EXTENSION'}), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
         else:  # if the key was not valid
             print("Key is invalid!")

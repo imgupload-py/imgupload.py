@@ -48,8 +48,7 @@ def rmkey(delkey):
 
     if removedkey:
         return True
-    else:
-        return False
+    return False
 
 
 def find_duplicates():

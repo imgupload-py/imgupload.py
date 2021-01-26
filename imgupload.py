@@ -111,10 +111,6 @@ def upload():
 
                 url = settings.ROOTURL + fname  # construct the url to the image
 
-                path_txt = encoding.encode(fname)  # encode the filename
-                fancy_url = settings.ROOTURL + "fancy/" + path_txt  # create the invisible encoded url
-                discord_url = settings.ROOTURL + "discord/" + path_txt  # create the invisible encoded url
-
                 if settings.SAVELOG != "/dev/null":
                     print("Saving to savelog")
                     log_savelog(request.form["uploadKey"], request.remote_addr, fname)
@@ -122,8 +118,6 @@ def upload():
                 print("Returning json response")
                 return jsonify({'status'        : 'success',
                                 'url'           : url,          # ex. https://example.com/AbcD1234.png
-                                'fancy_url'     : fancy_url,    # invisible encoded form
-                                'discord_url'   : discord_url,  # fancy_url but also embed instead of direct file
                                 'name'          : fname,        # filename
                                 'uploadedName'  : f.filename,   # name that was uploaded
                                 }), status.HTTP_201_CREATED

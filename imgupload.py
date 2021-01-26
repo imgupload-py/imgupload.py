@@ -39,10 +39,13 @@ def log_savelog(key, ip, savedname):
         os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
 
 
-@app.route("/upload", methods = ["GET", "POST"])
+@app.route("/upload", methods = ["GET"])
+def upload_redirect():
+    return render_template("upload.html", settings = settings)
+
+
+@app.route("/api/v1/upload", methods = ["GET", "POST"])
 def upload():
-    if request.method == "GET":
-        return render_template("upload.html", settings = settings)
     print("Request method was POST!")
 
     with open("uploadkeys", "r") as keyfile:

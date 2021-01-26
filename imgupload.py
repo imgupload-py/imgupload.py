@@ -15,7 +15,6 @@ import datetime
 from pathlib import Path
 from PIL import Image
 import tempfile
-import encoding
 
 import settings  # app settings (such as allowed extensions)
 import functions  # custom functions

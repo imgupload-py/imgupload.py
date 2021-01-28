@@ -22,12 +22,6 @@ import functions  # custom functions
 app = Flask(__name__)  # app is the app
 
 
-def allowed_extension(testext):
-    if testext.lower() in settings.ALLOWED_EXTENSIONS:
-        return True
-    return False
-
-
 def log_savelog(key, ip, savedname):
     if settings.SAVELOG_KEYPREFIX > 0:
         with open(settings.SAVELOG, "a+") as slogf:
@@ -75,7 +69,7 @@ def upload():
                 return jsonify({'status': 'error', 'error': 'FILENAME_BLANK'}), status.HTTP_400_BAD_REQUEST
 
             fext = Path(f.filename).suffix  # get the uploaded extension
-            if allowed_extension(fext):  # if the extension is allowed
+            if fext.lower() in settings.ALLOWED_EXTENSIONS:  # if the extension is allowed
                 if not "imageName" in request.form.keys():  # if an image name wasn't provided
                     print(f"Generating file with extension {fext}")
                     fname = functions.generate_name() + fext  # generate file name

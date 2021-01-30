@@ -16,21 +16,12 @@ from pathlib import Path
 from PIL import Image
 import tempfile
 
+import util
+
 import settings  # app settings (such as allowed extensions)
 import functions  # custom functions
 
 app = Flask(__name__)  # app is the app
-
-
-def log_savelog(key, ip, savedname):
-    if settings.SAVELOG_KEYPREFIX > 0:
-        with open(settings.SAVELOG, "a+") as slogf:
-            slogf.write(f"[{datetime.datetime.now()}] {key[:settings.SAVELOG_KEYPREFIX]}: {ip} - {savedname}\n")
-        os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
-    else:
-        with open(settings.SAVELOG, "a+") as slogf:
-            slogf.write(f"[{datetime.datetime.now()}] {ip} - {savedname}\n")
-        os.chmod(settings.SAVELOG, settings.SAVELOG_CHMOD)
 
 
 @app.route("/upload", methods = ["GET"])
@@ -109,7 +100,7 @@ def upload():
 
                 if settings.SAVELOG != "/dev/null":
                     print("Saving to savelog")
-                    log_savelog(request.form["uploadKey"], request.remote_addr, fname)
+                    util.log_savelog(request.form["uploadKey"], request.remote_addr, fname)
 
                 print("Returning json response")
                 return jsonify({'status'        : 'success',

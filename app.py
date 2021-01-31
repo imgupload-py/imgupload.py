@@ -6,12 +6,10 @@ Flask application for processing images uploaded through POST requests.
 """
 
 
-from flask import Flask, request, jsonify, render_template, redirect
+from flask import Flask, request, jsonify, render_template
 from flask_api import status
 
 import os
-import re
-import datetime
 from pathlib import Path
 from PIL import Image
 import tempfile

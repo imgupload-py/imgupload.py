@@ -8,6 +8,7 @@ Flask application for processing images uploaded through POST requests.
 
 from flask import Flask, request, jsonify, render_template
 from flask_api import status
+from werkzeug.utils import secure_filename
 
 import os
 from pathlib import Path
@@ -31,11 +32,7 @@ def upload_redirect():
 def upload():
     print("Request method was POST!")
 
-    with open("uploadkeys", "r") as keyfile:
-        validkeys = keyfile.readlines()  # load valid keys
-    validkeys = [x.strip("\n") for x in validkeys]  # remove newlines
-    while "" in validkeys:
-        validkeys.remove("")  # remove blank keys
+    validkeys = util.load_uploadkeys()
     print("Loaded validkeys")
 
     if not "uploadKey" in request.form:  # if an uploadKey wasn't provided
@@ -74,11 +71,13 @@ def upload():
         fname = functions.generate_name() + fext  # generate file name
         print(f"Generated name: {fname}")
     else:  # if a name was requested
-        fname = request.form["imageName"]  # get the requested image name
+        fname_unsafe = request.form["imageName"]  # get the requested image name
+        print(f"Request imageName: {fname_unsafe}")
+        fname = secure_filename(fname_unsafe)  # sanitize the image name
+        print(f"Sanitized imageName: {fname}")
         if len(fname) <= 0:  # if the requested name is blank
             print("Requested filename is blank!")
             return jsonify({'status': 'error', 'error': 'REQUESTED_FILENAME_BLANK'}), status.HTTP_400_BAD_REQUEST
-        print(f"Request imageName: {fname}")
         if not fname.lower().endswith(fext.lower()):  # if requested name doesn't have the correct extension
             fname += fext  # add the extension
             print(f"Added extension; new filename: {fname}")
@@ -91,15 +90,7 @@ def upload():
         print("Requested filename already exists!")
         return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
 
-    with tempfile.TemporaryFile() as tmpf:
-        f.save(tmpf)  # save the image temporarily (before removing EXIF)
-
-        image = Image.open(tmpf)
-        data = list(image.getdata())
-        stripped = Image.new(image.mode, image.size)
-        stripped.putdata(data)
-        stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
-
+        util.save_to_tempfile(f, fname)
         print(f"Saved to {fname}")
 
     url = settings.ROOTURL + fname  # construct the url to the image

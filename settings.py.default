@@ -11,3 +11,4 @@ ROOTURL = "https://example.com/"
 SAVELOG = "savelog.log"
 SAVELOG_CHMOD = 0o644
 SAVELOG_KEYPREFIX = 4
+LOGLEVEL = 4 # 1: error, 2: warning, 3: info (default), 4: debug

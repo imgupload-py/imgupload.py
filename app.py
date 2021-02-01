@@ -111,8 +111,8 @@ def upload():
     print("Returning json response")
     return jsonify({'status'        : 'success',
                     'url'           : url,          # ex. https://example.com/AbcD1234.png
-                    'name'          : fname,        # filename
-                    'uploadedName'  : f.filename,   # name that was uploaded
+                    'name'          : fname,        # filename on server
+                    'sourceName'    : f.filename,   # original filename
                     }), status.HTTP_201_CREATED
 
 if __name__ == "__main__":

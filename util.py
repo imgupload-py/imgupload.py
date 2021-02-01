@@ -37,7 +37,7 @@ def load_uploadkeys() -> list:
     return validkeys
 
 
-def save_to_tempfile(f: FileStorage, fname: str) -> None:
+def save_and_strip_exif(f: FileStorage, fname: str) -> None:
     with tempfile.TemporaryFile() as tmpf:
         f.save(tmpf)  # save the image temporarily (before removing EXIF)
 

@@ -90,8 +90,8 @@ def upload():
         print("Requested filename already exists!")
         return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
 
-        util.save_to_tempfile(f, fname)
-        print(f"Saved to {fname}")
+    util.save_and_strip_exif(f, fname)
+    print(f"Saved to {fname}")
 
     url = settings.ROOTURL + fname  # construct the url to the image
 

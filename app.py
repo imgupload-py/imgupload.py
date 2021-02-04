@@ -107,4 +107,4 @@ def upload():
                     }), status.HTTP_201_CREATED
 
 if __name__ == "__main__":
-    print("Run with `flask` or a WSGI server!")
+    app.run(host="127.0.0.1", port="5001", debug=True)

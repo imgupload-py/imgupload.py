@@ -16,7 +16,7 @@ from app import logger as master_logger
 import settings
 
 
-util_logger = master_logger.getChild("util.py")
+util_logger = master_logger.getChild("util")
 
 
 def log_savelog(key: str, ip: str, savedname: str) -> None:
@@ -59,10 +59,8 @@ def save_and_strip_exif(f: FileStorage, fname: str) -> None:
         image = Image.open(tmpf)
         logger.debug("Opened image with PIL")
         data = list(image.getdata())
-        logger.debug("Loaded image into PIL")
         stripped = Image.new(image.mode, image.size)
-        logger.debug("Loaded image using PIL")
         stripped.putdata(data)
-        logger.debug("Loaded image using PIL")
+        logger.debug("Image stripped of EXIF using PIL")
         stripped.save(os.path.join(settings.UPLOAD_FOLDER, fname))  # save the image without EXIF
-        logger.debug("Loaded image using PIL")
+        logger.debug("Saved stripped image")

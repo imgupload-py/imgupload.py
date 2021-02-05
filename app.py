@@ -16,15 +16,15 @@ from PIL import Image
 import tempfile
 import logging
 
-import util
-
 import settings  # app settings (such as allowed extensions)
 import functions  # custom functions
 
 
 logging.basicConfig(level=settings.LOGLEVEL)
-logger = logging.getLogger("imgupload.py")
+logger = logging.getLogger("app")
 logger.info("Initialized logging")
+
+import util
 
 
 app = Flask(__name__)  # app is the app

@@ -5,10 +5,12 @@ settings.py
 User-defined settings used by imgupload.py.
 """
 
+import logging
+
 UPLOAD_FOLDER = "/path/to/images"
 ALLOWED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".svg", ".bmp", ".gif", ".ico",  ".webp"]
 ROOTURL = "https://example.com/"
 SAVELOG = "savelog.log"
 SAVELOG_CHMOD = 0o644
 SAVELOG_KEYPREFIX = 4
-LOGLEVEL = 4 # 1: error, 2: warning, 3: info (default), 4: debug
+LOGLEVEL = logging.INFO

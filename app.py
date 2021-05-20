@@ -16,24 +16,22 @@ from PIL import Image
 import tempfile
 import logging
 
-import settings  # app settings (such as allowed extensions)
 import functions  # custom functions
-
-
-logging.basicConfig(level=settings.LOGLEVEL)
-logger = logging.getLogger("app")
-logger.info("Initialized logging")
-
 import util
 
 
 app = Flask(__name__)  # app is the app
+app.config.from_object("settings")
+
+logging.basicConfig(level=app.config["LOGLEVEL"])
+logger = logging.getLogger("app")
+logger.info("Initialized logging")
 
 
 @app.route("/upload", methods = ["GET"])
 def upload_redirect():
     logger.info("Received GET /upload, returning template")
-    return render_template("upload.html", settings = settings)
+    return render_template("upload.html", ROOTURL = request.host)
 
 
 @app.route("/api/v1/upload", methods = ["POST"])
@@ -69,7 +67,7 @@ def upload():
         return jsonify({'status': 'error', 'error': 'FILENAME_BLANK'}), status.HTTP_400_BAD_REQUEST
 
     fext = Path(f.filename).suffix  # get the uploaded extension
-    if not fext.lower() in settings.ALLOWED_EXTENSIONS:  # if the extension isn't allowed
+    if not fext.lower() in app.config["ALLOWED_EXTENSIONS"]:  # if the extension isn't allowed
         logger.info("Uploaded extension is invalid!")
         return jsonify({'status': 'error', 'error': 'INVALID_EXTENSION'}), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
@@ -91,16 +89,16 @@ def upload():
     # if f:  # if the uploaded image exists
     # not sure why the above was added, but I'll keep it here just in case
 
-    if Path(os.path.join(settings.UPLOAD_FOLDER, fname)).is_file():
+    if Path(os.path.join(app.config["UPLOAD_FOLDER"], fname)).is_file():
         logger.info("Requested filename already exists!")
         return jsonify({'status': 'error', 'error': 'FILENAME_TAKEN'}), status.HTTP_409_CONFLICT
 
     util.save_and_strip_exif(f, fname)
     logger.info(f"Saved to {fname}")
 
-    url = settings.ROOTURL + fname  # construct the url to the image
+    url = request.host + "/" + fname  # construct the url to the image
 
-    if settings.SAVELOG != "/dev/null":
+    if app.config["SAVELOG"] != "/dev/null":
         logger.info("Logging to savelog")
         util.log_savelog(request.form["uploadKey"], request.remote_addr, fname)
 

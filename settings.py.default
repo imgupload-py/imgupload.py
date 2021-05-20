@@ -9,7 +9,6 @@ import logging
 
 UPLOAD_FOLDER = "/path/to/images"
 ALLOWED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".svg", ".bmp", ".gif", ".ico",  ".webp"]
-ROOTURL = "https://example.com/"
 SAVELOG = "savelog.log"
 SAVELOG_CHMOD = 0o644
 SAVELOG_KEYPREFIX = 4
